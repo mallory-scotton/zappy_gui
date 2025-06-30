@@ -5,6 +5,7 @@
 #include "Errors/ImGuiException.hpp"
 #include "Libraries/imgui.h"
 #include "Libraries/imgui-SFML.h"
+#include "Libraries/imgui_internal.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Namespace Zappy
@@ -47,11 +48,72 @@ void Gui::Update(void)
 ///////////////////////////////////////////////////////////////////////////////
 void Gui::Render(unsigned int viewport)
 {
+    PrepareDocking();
+
     ImGui::ShowDemoWindow();
 
     (void)viewport; // TODO: Do something with the viewport parameter
 
     ImGui::SFML::Render(m_window);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void Gui::PrepareDocking(void)
+{
+    ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(viewport->WorkPos);
+    ImGui::SetNextWindowSize(viewport->WorkSize);
+    ImGui::SetNextWindowViewport(viewport->ID);
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+
+    ImGuiWindowFlags window_flags =
+        ImGuiWindowFlags_NoDocking |
+        ImGuiWindowFlags_NoTitleBar |
+        ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoBringToFrontOnFocus |
+        ImGuiWindowFlags_NoNavFocus |
+        ImGuiWindowFlags_NoBackground;
+
+    ImGui::Begin("DockSpaceHost", nullptr, window_flags);
+    ImGui::PopStyleVar(3);
+
+    ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+    ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f),
+        ImGuiDockNodeFlags_PassthruCentralNode
+    );
+
+    static bool dockspace_initialized = false;
+    if (!dockspace_initialized)
+    {
+        dockspace_initialized = true;
+
+        ImGui::DockBuilderRemoveNode(dockspace_id);
+
+        ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_DockSpace);
+        ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->WorkSize);
+
+        ImGuiID dock_id_left = ImGui::DockBuilderSplitNode(dockspace_id,
+            ImGuiDir_Left, 0.25f, nullptr, &dockspace_id);
+        ImGuiID dock_id_right = ImGui::DockBuilderSplitNode(dockspace_id,
+            ImGuiDir_Right, 0.25f, nullptr, &dockspace_id);
+
+        ImGuiID dock_id_right_top = ImGui::DockBuilderSplitNode(dock_id_right,
+            ImGuiDir_Up, 0.5f, nullptr, &dock_id_right);
+
+        ImGui::DockBuilderDockWindow("Logs", dock_id_left);
+        ImGui::DockBuilderDockWindow("Viewport", dockspace_id);
+        ImGui::DockBuilderDockWindow("Current Game", dock_id_right_top);
+        ImGui::DockBuilderDockWindow("Tile Inspector", dock_id_right);
+
+        ImGui::DockBuilderFinish(dockspace_id);
+    }
+
+    ImGui::End();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
