@@ -6,11 +6,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Dependencies
 ///////////////////////////////////////////////////////////////////////////////
-#include "Network/Socket.hpp"
-#include "Game/Inventory.hpp"
-#include "Game/Team.hpp"
-#include "Utils/Singleton.hpp"
-#include <vector>
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
+#include <SFML/System.hpp>
 
 ///////////////////////////////////////////////////////////////////////////////
 // Namespace Zappy
@@ -22,37 +20,36 @@ namespace Zappy
 /// \brief
 ///
 ///////////////////////////////////////////////////////////////////////////////
-class GameState : public Singleton<GameState>
+class Viewport
 {
 private:
     ///////////////////////////////////////////////////////////////////////////
     // Private members
     ///////////////////////////////////////////////////////////////////////////
-    Socket m_socket;                    //<! Network socket for communication
-    bool m_isConnected;                 //<! Connection status to the game server
-    std::string m_host;                 //<! Host address for the game server
-    int m_port;                         //<! Port number for the game server
-    std::vector<Inventory> m_tiles;     //<! Tiles in the game state
-    std::vector<Team> m_teams;          //<! Teams in the game state
+    sf::View m_view;                //< The SFML view for the viewport
+    sf::RenderTexture m_texture;    //< The texture used for rendering
 
 public:
     ///////////////////////////////////////////////////////////////////////////
     /// \brief
     ///
     ///////////////////////////////////////////////////////////////////////////
-    GameState(void);
+    Viewport(void);
 
 public:
     ///////////////////////////////////////////////////////////////////////////
-    /// \brief Connect to the game server
+    /// \brief Get the texture id of the viewport
     ///
-    /// \param host The host address of the game server
-    /// \param port The port number of the game server
-    ///
-    /// \return True if the connection was successful, false otherwise
+    /// \return The texture ID of the viewport
     ///
     ///////////////////////////////////////////////////////////////////////////
-    bool Connect(const std::string& host, int port);
+    unsigned int GetTextureID(void) const;
+
+    ///////////////////////////////////////////////////////////////////////////
+    /// \brief Render the viewport
+    ///
+    ///////////////////////////////////////////////////////////////////////////
+    void Render(void);
 };
 
 } // !namespace Zappy

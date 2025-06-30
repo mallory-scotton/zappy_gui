@@ -1,8 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Dependencies
 ///////////////////////////////////////////////////////////////////////////////
-#include "Core/Application.hpp"
-#include "Errors/NetworkException.hpp"
+#include "Graphics/Viewport.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Namespace Zappy
@@ -11,29 +10,17 @@ namespace Zappy
 {
 
 ///////////////////////////////////////////////////////////////////////////////
-Application::Application(const std::string& host, int port)
+Viewport::Viewport(void)
+{}
+
+///////////////////////////////////////////////////////////////////////////////
+unsigned int Viewport::GetTextureID(void) const
 {
-    GameState& state = GameState::GetInstance();
-
-    if (!state.Connect(host, port))
-    {
-        throw NetworkException("Failed to connect to the game server");
-    }
-
-    m_renderer = std::make_unique<Renderer>();
+    return (m_texture.getTexture().getNativeHandle());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-bool Application::IsOpen(void) const
-{
-    return (m_renderer && m_renderer->IsOpen());
-}
-
-///////////////////////////////////////////////////////////////////////////////
-void Application::Update(void)
-{
-    m_renderer->Update();
-    m_renderer->Display();
-}
+void Viewport::Render(void)
+{}
 
 } // !namespace Zappy

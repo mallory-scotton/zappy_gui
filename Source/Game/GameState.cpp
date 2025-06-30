@@ -16,16 +16,17 @@ namespace Zappy
 {
 
 ///////////////////////////////////////////////////////////////////////////////
-GameState::GameState(const std::string& host, int port)
+GameState::GameState()
     : m_socket(AF_INET, SOCK_STREAM)
     , m_isConnected(false)
-    , m_host(host)
-    , m_port(port)
 {}
 
 ///////////////////////////////////////////////////////////////////////////////
-bool GameState::Connect(void)
+bool GameState::Connect(const std::string& host, int port)
 {
+    m_host = host;
+    m_port = port;
+
     try
     {
         if (!m_socket.IsValid())

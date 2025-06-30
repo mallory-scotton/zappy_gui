@@ -1,0 +1,79 @@
+///////////////////////////////////////////////////////////////////////////////
+// Dependencies
+///////////////////////////////////////////////////////////////////////////////
+#include "Graphics/Renderer.hpp"
+
+///////////////////////////////////////////////////////////////////////////////
+// Namespace Zappy
+///////////////////////////////////////////////////////////////////////////////
+namespace Zappy
+{
+
+///////////////////////////////////////////////////////////////////////////////
+Renderer::Renderer(void)
+    : m_window(sf::VideoMode(1280, 720), "Zappy", sf::Style::Default)
+    , m_viewport()
+    , m_gui(m_window)
+{
+    m_window.setFramerateLimit(60);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+Renderer::~Renderer()
+{
+    if (m_window.isOpen())
+    {
+        m_window.close();
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool Renderer::IsOpen(void) const
+{
+    return (m_window.isOpen());
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void Renderer::Update(void)
+{
+    sf::Event event;
+
+    while (m_window.pollEvent(event))
+    {
+        m_gui.ProcessEvent(event);
+
+        if (event.type == sf::Event::Closed)
+        {
+            m_window.close();
+        }
+        else if (event.type == sf::Event::KeyPressed)
+        {
+            if (event.key.code == sf::Keyboard::Escape)
+            {
+                m_window.close();
+            }
+        }
+    }
+
+    m_gui.Update();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void Renderer::Display(void)
+{
+    m_window.clear();
+    m_viewport.Render();
+    m_gui.Render(m_viewport.GetTextureID());
+    m_window.display();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void Renderer::Close(void)
+{
+    if (m_window.isOpen())
+    {
+        m_window.close();
+    }
+}
+
+} // !namespace Zappy
