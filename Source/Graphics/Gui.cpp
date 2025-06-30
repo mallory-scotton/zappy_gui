@@ -50,11 +50,44 @@ void Gui::Render(unsigned int viewport)
 {
     PrepareDocking();
 
-    ImGui::ShowDemoWindow();
-
-    (void)viewport; // TODO: Do something with the viewport parameter
+    RenderLogs();
+    RenderCurrentGame();
+    RenderTileInspector();
+    RenderViewport(viewport);
 
     ImGui::SFML::Render(m_window);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void Gui::RenderViewport(unsigned int viewport)
+{
+    ImGui::Begin("Viewport");
+    ImGui::Text("Rendering viewport: %d", viewport);
+    ImGui::End();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void Gui::RenderLogs(void)
+{
+    ImGui::Begin("Logs");
+    ImGui::Text("Log messages will appear here.");
+    ImGui::End();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void Gui::RenderCurrentGame(void)
+{
+    ImGui::Begin("Current Game");
+    ImGui::Text("Game state and information will be displayed here.");
+    ImGui::End();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void Gui::RenderTileInspector(void)
+{
+    ImGui::Begin("Tile Inspector");
+    ImGui::Text("Inspect tiles and their properties here.");
+    ImGui::End();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
