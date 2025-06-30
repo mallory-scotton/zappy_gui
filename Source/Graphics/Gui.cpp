@@ -78,7 +78,34 @@ void Gui::RenderLogs(void)
 void Gui::RenderCurrentGame(void)
 {
     ImGui::Begin("Current Game");
-    ImGui::Text("Game state and information will be displayed here.");
+
+    ImGui::Text("Current Frequency: %d", 0);
+    ImGui::Text("Players Alive: %d | Players Dead: %d",
+        0, 0);
+
+    //TODO: team names here
+
+    ImGui::Dummy(ImVec2(0.0f, 5.0f));
+    ImGui::Separator();
+    ImGui::Dummy(ImVec2(0.0f, 5.0f));
+
+    ImGui::Text("Total Resources:");
+    ImGui::Text("Food: %d", 0);
+    ImGui::Text("Linemate: %d", 0);
+    ImGui::Text("Deraumere: %d", 0);
+    ImGui::Text("Sibur: %d", 0);
+    ImGui::Text("Mendiane: %d", 0);
+    ImGui::Text("Phiras: %d", 0);
+    ImGui::Text("Thystame: %d", 0);
+
+    ImGui::Dummy(ImVec2(0.0f, 5.0f));
+    ImGui::Separator();
+    ImGui::Dummy(ImVec2(0.0f, 5.0f));
+
+    ImGui::Text("Players Alive:");
+    //TODO: players alive here per team per level
+    // use tree node ?
+
     ImGui::End();
 }
 
