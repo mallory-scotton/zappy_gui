@@ -14,9 +14,7 @@ Renderer::Renderer(void)
     : m_window(sf::VideoMode(1280, 720), "Zappy", sf::Style::Default)
     , m_viewport()
     , m_gui(m_window)
-{
-    m_window.setFramerateLimit(60);
-}
+{}
 
 ///////////////////////////////////////////////////////////////////////////////
 Renderer::~Renderer()
