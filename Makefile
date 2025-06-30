@@ -104,4 +104,9 @@ build-x86_64: download-x86_64 all
 	Categories=Game;" > $(APPIMAGE_DIR)/usr/share/applications/zappy_gui.desktop
 
 	@printf "$(YELLOW)[APPIMAGE]$(RESET) $(BOLD)Building AppImage$(RESET)\n"
-	@./linuxdeploy-x86_64.AppImage --appdir $(APPIMAGE_DIR) --output appimage
+	@./linuxdeploy-x86_64.AppImage --appdir $(APPIMAGE_DIR) --output appimage > /dev/null
+
+	@printf "$(GREEN)[APPIMAGE]$(RESET) $(BOLD)AppImage Successfully Builded$(RESET)\n"
+
+	@mkdir -p Builds
+	@mv zappy_gui-*.AppImage Builds/
