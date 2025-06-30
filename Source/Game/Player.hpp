@@ -127,14 +127,6 @@ public:
     const Inventory& GetInventory(void) const;
 
     ///////////////////////////////////////////////////////////////////////////
-    /// \brief Checks if the player is alive
-    ///
-    /// \return True if the player is alive, false otherwise
-    ///
-    ///////////////////////////////////////////////////////////////////////////
-    bool IsAlive(void) const;
-
-    ///////////////////////////////////////////////////////////////////////////
     /// \brief Updates the player's inventory based on the provided PIN message
     ///
     /// \param pin The PIN message string containing inventory data

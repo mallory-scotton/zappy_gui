@@ -93,12 +93,6 @@ const Inventory& Player::GetInventory(void) const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-bool Player::IsAlive(void) const
-{
-    return (m_isAlive);
-}
-
-///////////////////////////////////////////////////////////////////////////////
 void Player::UpdateInventory(const std::string& pin)
 {
     m_inventory.ParseContent(pin);
