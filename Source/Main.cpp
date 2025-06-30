@@ -20,5 +20,10 @@ int main(int argc, char* argv[])
         return (args.GetExitCode());
     }
 
+    if (host == "localhost")
+    {
+        host = "127.0.0.1";
+    }
+
     return (0);
 }
