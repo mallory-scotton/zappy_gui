@@ -8,7 +8,7 @@
 TARGET			=	zappy_gui
 
 CXX				=	g++
-CXXFLAGS		=	-Wall -Wextra -std=gnu++20
+CXXFLAGS		=	-Wall -Wextra -std=gnu++20 -static
 LDFLAGS			=
 INCLUDES		=	-ISource
 FLAGS			=	$(CXXFLAGS) $(LDFLAGS) $(INCLUDES)
