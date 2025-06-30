@@ -171,16 +171,16 @@ void GameState::ParseMSZ(const std::string& msg)
 void GameState::ParseBCT(const std::string& msg)
 {
     std::istringstream iss(msg);
-    int x, y;
+    unsigned int x, y;
 
     iss >> x >> y;
 
-    if (x < 0 || x >= m_width || y < 0 || y >= m_height)
+    if (x >= m_width || y >= m_height)
     {
         return;
     }
 
-    int index = y * m_width + x;
+    unsigned int index = y * m_width + x;
 
     m_tiles[index].ParseContent(iss.str());
 }
@@ -257,8 +257,8 @@ void GameState::ParsePEX(const std::string& msg)
 
         m_messages.emplace_back(
             player.GetName() + " has left the game.",
-            "EVENT",
-            "SERVER",
+            "Event",
+            "Server",
             true
         );
     }
@@ -280,7 +280,7 @@ void GameState::ParsePBC(const std::string& msg)
 
         m_messages.emplace_back(
             player.GetName() + ": " + content,
-            "BROADCAST",
+            "Broadcast",
             player.GetName(),
             false
         );
@@ -290,63 +290,300 @@ void GameState::ParsePBC(const std::string& msg)
 
 ///////////////////////////////////////////////////////////////////////////////
 void GameState::ParsePIC(const std::string& msg)
-{}
+{
+    std::istringstream iss(msg);
+    unsigned int x, y, level;
+    std::vector<unsigned int> ids;
+    std::string idStr;
+
+    iss >> x >> y >> level;
+
+    while (iss >> idStr)
+    {
+        if (!idStr.empty())
+        {
+            unsigned int id = std::stoi(idStr.substr(1));
+            ids.push_back(id);
+        }
+    }
+
+    m_messages.emplace_back(
+        "Incantation started at (" + std::to_string(x) +
+        ", " + std::to_string(y) + ") for level " +
+        std::to_string(level) + " by Player " + std::to_string(ids[0]),
+        "Incantation",
+        "Server",
+        true
+    );
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 void GameState::ParsePIE(const std::string& msg)
-{}
+{
+    std::istringstream iss(msg);
+    unsigned int x, y;
+    std::string result;
+
+    iss >> x >> y >> result;
+
+    m_messages.emplace_back(
+        "Incantation ended at (" + std::to_string(x) + ", " +
+        std::to_string(y) + ") with result: " + result,
+        "Incantation",
+        "Server",
+        true
+    );
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 void GameState::ParsePFK(const std::string& msg)
-{}
+{
+    std::istringstream iss(msg);
+
+    try
+    {
+        Player& player = GetPlayerByID(iss);
+        m_messages.emplace_back(
+            player.GetName() + " is laying an egg",
+            "Egg",
+            player.GetName(),
+            true
+        );
+    }
+    catch (...) {}
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 void GameState::ParsePDR(const std::string& msg)
-{}
+{
+    std::istringstream iss(msg);
+    unsigned int index;
+
+    static const std::vector<std::string> resources =
+    {
+        "food",
+        "linemate", "deraumere", "sibur",
+        "mendiane", "phiras", "thystame"
+    };
+
+    try
+    {
+        Player& player = GetPlayerByID(iss);
+
+        iss >> index;
+
+        m_messages.emplace_back(
+            player.GetName() + " has dropped a resource: " + resources[index],
+            "Resource",
+            player.GetName(),
+            true
+        );
+    }
+    catch (...) {}
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 void GameState::ParsePGT(const std::string& msg)
-{}
+{
+    std::istringstream iss(msg);
+    unsigned int index;
+
+    static const std::vector<std::string> resources =
+    {
+        "food",
+        "linemate", "deraumere", "sibur",
+        "mendiane", "phiras", "thystame"
+    };
+
+    try
+    {
+        Player& player = GetPlayerByID(iss);
+
+        iss >> index;
+
+        m_messages.emplace_back(
+            player.GetName() + " has taken a resource: " + resources[index],
+            "Resource",
+            player.GetName(),
+            true
+        );
+    }
+    catch (...) {}
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 void GameState::ParsePDI(const std::string& msg)
-{}
+{
+    std::istringstream iss(msg);
+
+    try
+    {
+        Player& player = GetPlayerByID(iss);
+
+        player.SetAlive(false);
+
+        m_messages.emplace_back(
+            player.GetName() + " died",
+            "Death",
+            "Server",
+            true
+        );
+    }
+    catch (...) {}
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 void GameState::ParseENW(const std::string& msg)
-{}
+{
+    std::istringstream iss(msg);
+    std::string eggStr;
+    unsigned int x, y;
+
+    iss >> eggStr;
+
+    try
+    {
+        Player& player = GetPlayerByID(iss);
+
+        unsigned int id = std::stoi(eggStr.substr(1));
+        iss >> x >> y;
+
+        m_messages.emplace_back(
+            "Egg " + std::to_string(id) + " laid by Player " +
+            std::to_string(player.GetID()) + " at (" +
+            std::to_string(x) + ", " + std::to_string(y) + ")",
+            "Egg",
+            player.GetName(),
+            true
+        );
+    }
+    catch (...) {}
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 void GameState::ParseEBO(const std::string& msg)
-{}
+{
+    std::istringstream iss(msg);
+    std::string eggStr;
+
+    iss >> eggStr;
+
+    unsigned int id = std::stoi(eggStr.substr(1));
+
+    m_messages.emplace_back(
+        "Egg " + std::to_string(id) + " has been hatched",
+        "Egg",
+        "Server",
+        true
+    );
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 void GameState::ParseEDI(const std::string& msg)
-{}
+{
+    std::istringstream iss(msg);
+    std::string eggStr;
+
+    iss >> eggStr;
+
+    unsigned int id = std::stoi(eggStr.substr(1));
+
+    m_messages.emplace_back(
+        "Egg " + std::to_string(id) + " has been destroyed",
+        "Egg",
+        "Server",
+        true
+    );
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 void GameState::ParseSGT(const std::string& msg)
-{}
+{
+    std::istringstream iss(msg);
+
+    iss >> m_frequency;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 void GameState::ParseSST(const std::string& msg)
-{}
+{
+    std::istringstream iss(msg);
+
+    iss >> m_frequency;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 void GameState::ParseSEG(const std::string& msg)
-{}
+{
+    std::istringstream iss(msg);
+    std::string teamName;
+
+    iss >> teamName;
+
+    m_messages.emplace_back(
+        "Team " + teamName + " has won the game!",
+        "Victory",
+        "Server",
+        true
+    );
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 void GameState::ParseSMG(const std::string& msg)
-{}
+{
+    std::istringstream iss(msg);
+    std::string content;
+
+    std::getline(iss, content);
+    content.erase(0, content.find_first_not_of(' '));
+
+    m_messages.emplace_back(
+        content,
+        "Info",
+        "Server",
+        false
+    );
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 void GameState::ParseSUC(const std::string& msg)
-{}
+{
+    std::istringstream iss(msg);
+    std::string command;
+
+    std::getline(iss, command);
+    command.erase(0, command.find_first_not_of(' '));
+
+    m_messages.emplace_back(
+        "Unknown command: " + command,
+        "Error",
+        "Server",
+        true
+    );
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 void GameState::ParseSBP(const std::string& msg)
-{}
+{
+    std::istringstream iss(msg);
+    std::string command, params;
+
+    iss >> command;
+
+    std::getline(iss, params);
+    params.erase(0, params.find_first_not_of(' '));
+
+    if (params.empty() || command.empty())
+    {
+        return;
+    }
+    m_messages.emplace_back(
+        "Bad parameter for command: " + command + " " + params,
+        "Error",
+        "Server",
+        false
+    );
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 Player& GameState::GetPlayerByID(std::istringstream& iss)

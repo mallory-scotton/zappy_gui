@@ -114,4 +114,10 @@ void Player::UpdateLevel(const std::string& plv)
     iss >> m_level;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+void Player::SetAlive(bool alive)
+{
+    m_isAlive = alive;
+}
+
 } // !namespace Zappy
