@@ -6,10 +6,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Dependencies
 ///////////////////////////////////////////////////////////////////////////////
-#include "Network/Socket.hpp"
-#include "Game/Inventory.hpp"
-#include "Game/Team.hpp"
-#include <vector>
+#include "Game/GameState.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Namespace Zappy
@@ -21,18 +18,14 @@ namespace Zappy
 /// \brief
 ///
 ///////////////////////////////////////////////////////////////////////////////
-class GameState
+class Application
 {
 private:
     ///////////////////////////////////////////////////////////////////////////
     // Private members
     ///////////////////////////////////////////////////////////////////////////
-    Socket m_socket;                    //<! Network socket for communication
-    bool m_isConnected;                 //<! Connection status to the game server
-    std::string m_host;                 //<! Host address for the game server
-    int m_port;                         //<! Port number for the game server
-    std::vector<Inventory> m_tiles;     //<! Tiles in the game state
-    std::vector<Team> m_teams;          //<! Teams in the game state
+    GameState m_gameState;  //<! Game state containing the current game data
+    bool m_isOpen;          //<! Application open status
 
 public:
     ///////////////////////////////////////////////////////////////////////////
@@ -42,16 +35,23 @@ public:
     /// \param port
     ///
     ///////////////////////////////////////////////////////////////////////////
-    GameState(const std::string& host, int port);
+    Application(const std::string& host, int port);
 
 public:
     ///////////////////////////////////////////////////////////////////////////
-    /// \brief Connect to the game server
+    /// \brief Initialize the application
     ///
-    /// \return True if the connection was successful, false otherwise
+    /// \return True if the application was initialized successfully,
+    /// false otherwise
     ///
     ///////////////////////////////////////////////////////////////////////////
-    bool Connect(void);
+    bool IsOpen(void) const;
+
+    ///////////////////////////////////////////////////////////////////////////
+    /// \brief Update the application state
+    ///
+    ///////////////////////////////////////////////////////////////////////////
+    void Update(void);
 };
 
 } // !namespace Zappy
