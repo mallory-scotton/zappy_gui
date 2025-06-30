@@ -47,6 +47,11 @@ GameState::GameState()
         {"suc", std::bind(&GameState::ParseSUC, this, std::placeholders::_1)},
         {"sbp", std::bind(&GameState::ParseSBP, this, std::placeholders::_1)}
     })
+    , m_width(0)
+    , m_height(0)
+    , m_frequency(0)
+    , m_livingPlayers(0)
+    , m_deadPlayers(0)
 {}
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -159,6 +164,18 @@ unsigned int GameState::GetFrequency(void) const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+unsigned int GameState::GetLivingPlayers(void) const
+{
+    return (m_livingPlayers);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+unsigned int GameState::GetDeadPlayers(void) const
+{
+    return (m_deadPlayers);
+}
+
+///////////////////////////////////////////////////////////////////////////////
 void GameState::ParseMSZ(const std::string& msg)
 {
     std::istringstream iss(msg);
@@ -214,6 +231,7 @@ void GameState::ParsePNW(const std::string& msg)
         if (team.GetName() == teamName)
         {
             team.AddPlayer(player);
+            m_livingPlayers++;
             break;
         }
     }
@@ -261,6 +279,17 @@ void GameState::ParsePEX(const std::string& msg)
             "Server",
             true
         );
+
+        for (auto& team : m_teams)
+        {
+            if (team.GetName() == player.GetTeam())
+            {
+                team.RemovePlayer(player);
+                m_livingPlayers--;
+                m_deadPlayers++;
+                break;
+            }
+        }
     }
     catch (...) {}
 }
@@ -428,6 +457,17 @@ void GameState::ParsePDI(const std::string& msg)
             "Server",
             true
         );
+
+        for (auto& team : m_teams)
+        {
+            if (team.GetName() == player.GetTeam())
+            {
+                team.RemovePlayer(player);
+                m_livingPlayers--;
+                m_deadPlayers++;
+                break;
+            }
+        }
     }
     catch (...) {}
 }

@@ -2,6 +2,7 @@
 // Dependencies
 ///////////////////////////////////////////////////////////////////////////////
 #include "Game/Team.hpp"
+#include <algorithm>
 
 ///////////////////////////////////////////////////////////////////////////////
 // Namespace Zappy
@@ -12,6 +13,7 @@ namespace Zappy
 ///////////////////////////////////////////////////////////////////////////////
 Team::Team(const std::string& name)
     : m_name(name)
+    , m_deadPlayers(0)
 {}
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -27,6 +29,24 @@ void Team::AddPlayer(const Player& player)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+void Team::RemovePlayer(const Player& player)
+{
+    auto it = std::remove_if(
+        m_players.begin(), m_players.end(),
+        [&player](const Player& p)
+        {
+            return (p.GetID() == player.GetID());
+        }
+    );
+
+    if (it != m_players.end())
+    {
+        m_players.erase(it, m_players.end());
+        m_deadPlayers++;
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
 const std::vector<Player>& Team::GetPlayers(void) const
 {
     return (m_players);
@@ -36,6 +56,18 @@ const std::vector<Player>& Team::GetPlayers(void) const
 std::vector<Player>& Team::GetPlayers(void)
 {
     return (m_players);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+unsigned int Team::GetLivingPlayers(void) const
+{
+    return (static_cast<unsigned int>(m_players.size()));
+}
+
+///////////////////////////////////////////////////////////////////////////////
+unsigned int Team::GetDeadPlayersCount(void) const
+{
+    return (m_deadPlayers);
 }
 
 } // !namespace Zappy
