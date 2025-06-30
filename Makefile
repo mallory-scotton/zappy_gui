@@ -68,7 +68,7 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re tests unit_tests tests_run
+.PHONY: all clean fclean re tests unit_tests tests_run build
 
 ###############################################################################
 # AppImage creation
@@ -110,3 +110,5 @@ build-x86_64: download-x86_64 all
 
 	@mkdir -p Builds
 	@mv zappy_gui-*.AppImage Builds/
+
+build: build-x86_64
