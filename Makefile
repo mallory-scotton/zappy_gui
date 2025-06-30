@@ -8,9 +8,9 @@
 TARGET			=	zappy_gui
 
 CXX				=	g++
-CXXFLAGS		=	-Wall -Wextra -std=gnu++20 -static
-LDFLAGS			=
-INCLUDES		=	-ISource
+CXXFLAGS		=	-Wall -Wextra -std=gnu++20
+LDFLAGS			=	-lsfml-graphics -lsfml-window -lsfml-system -lGL
+INCLUDES		=	-ISource -ISource/Libraries
 FLAGS			=	$(CXXFLAGS) $(LDFLAGS) $(INCLUDES)
 
 SOURCES			=	$(shell find Source -type f -iname "*.cpp")
