@@ -7,7 +7,7 @@
 // Dependencies
 ///////////////////////////////////////////////////////////////////////////////
 #include <string>
-#include <sstream>
+#include <chrono>
 
 ///////////////////////////////////////////////////////////////////////////////
 // Namespace Zappy
@@ -19,35 +19,40 @@ namespace Zappy
 /// \brief
 ///
 ///////////////////////////////////////////////////////////////////////////////
-class Inventory
+class Message
 {
-public:
+private:
     ///////////////////////////////////////////////////////////////////////////
-    // Public members
+    // Type alias for time point
     ///////////////////////////////////////////////////////////////////////////
-    unsigned int food;           //<! Food quantity on the tile
-    unsigned int linemate;       //<! Linemate quantity on the tile
-    unsigned int deraumere;      //<! Deraumere quantity on the tile
-    unsigned int sibur;          //<! Sibur quantity on the tile
-    unsigned int mendiane;       //<! Mendiane quantity on the tile
-    unsigned int phiras;         //<! Phiras quantity on the tile
-    unsigned int thystame;       //<! Thystame quantity on the tile
+    using TimePoint = std::chrono::steady_clock::time_point;
+
+private:
+    ///////////////////////////////////////////////////////////////////////////
+    // Private members
+    ///////////////////////////////////////////////////////////////////////////
+    std::string m_content;      //<! The content of the message
+    std::string m_type;         //<! The type of the message
+    std::string m_source;       //<! The source of the message
+    bool m_isImportant;         //<! Indicate if the message is important
+    TimePoint m_timestamp;      //<! The timestamp of the message
 
 public:
     ///////////////////////////////////////////////////////////////////////////
-    /// \brief Default constructor
+    /// \brief
+    ///
+    /// \param content The content of the message
+    /// \param type The type of the message
+    /// \param source The source of the message
+    /// \param isImportant Indicate if the message is important
     ///
     ///////////////////////////////////////////////////////////////////////////
-    Inventory(void);
-
-public:
-    ///////////////////////////////////////////////////////////////////////////
-    /// \brief Parses the content string to fill the inventory
-    ///
-    /// \param content The content string to parse
-    ///
-    ///////////////////////////////////////////////////////////////////////////
-    void ParseContent(const std::string& content);
+    Message(
+        const std::string& content,
+        const std::string& type,
+        const std::string& source,
+        bool isImportant = false
+    );
 };
 
 } // !namespace Zappy

@@ -20,4 +20,18 @@ Inventory::Inventory(void)
     , thystame(0)
 {}
 
+///////////////////////////////////////////////////////////////////////////////
+void Inventory::ParseContent(const std::string& content)
+{
+    std::istringstream iss(content);
+
+    iss >> food
+        >> linemate
+        >> deraumere
+        >> sibur
+        >> mendiane
+        >> phiras
+        >> thystame;
+}
+
 } // !namespace Zappy
