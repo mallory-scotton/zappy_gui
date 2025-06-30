@@ -9,6 +9,7 @@
 #include <chrono>
 #include <random>
 #include <sstream>
+#include <iostream>
 
 ///////////////////////////////////////////////////////////////////////////////
 // Namespace Zappy
@@ -92,7 +93,7 @@ void GameState::Update(void)
         return;
     }
 
-    std::string msg = m_socket.RecvLine();
+    std::string msg = m_socket.RecvLine(MSG_DONTWAIT);
 
     if (msg.empty())
     {
@@ -113,13 +114,13 @@ std::tuple<int, int> GameState::GetDimensions(void) const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-int GameState::GetWidth(void) const
+unsigned int GameState::GetWidth(void) const
 {
     return (m_width);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-int GameState::GetHeight(void) const
+unsigned int GameState::GetHeight(void) const
 {
     return (m_height);
 }
@@ -152,7 +153,7 @@ const std::vector<Message>& GameState::GetMessages(void) const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-int GameState::GetFrequency(void) const
+unsigned int GameState::GetFrequency(void) const
 {
     return (m_frequency);
 }
@@ -197,6 +198,8 @@ void GameState::ParseTNA(const std::string& msg)
         Team team(name);
         m_teams.push_back(team);
     }
+
+    std::cout << "Team added: " << name << std::endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

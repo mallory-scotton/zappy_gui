@@ -50,10 +50,10 @@ private:
         std::string,                    //<! Command name
         Command                         //<! Command function
     > m_commands;                       //<! Commands for the game state
-    int m_width;                        //<! Width of the game map
-    int m_height;                       //<! Height of the game map
+    unsigned int m_width;               //<! Width of the game map
+    unsigned int m_height;              //<! Height of the game map
     std::vector<Message> m_messages;    //<! Messages in the game state
-    int m_frequency;                    //<! Frequency of the game updates
+    unsigned int m_frequency;           //<! Frequency of the game updates
 
 public:
     ///////////////////////////////////////////////////////////////////////////
@@ -94,7 +94,7 @@ public:
     /// \return
     ///
     ///////////////////////////////////////////////////////////////////////////
-    int GetWidth(void) const;
+    unsigned int GetWidth(void) const;
 
     ///////////////////////////////////////////////////////////////////////////
     /// \brief
@@ -102,7 +102,7 @@ public:
     /// \return
     ///
     ///////////////////////////////////////////////////////////////////////////
-    int GetHeight(void) const;
+    unsigned int GetHeight(void) const;
 
     ///////////////////////////////////////////////////////////////////////////
     /// \brief
@@ -145,7 +145,7 @@ public:
     /// \return
     ///
     ///////////////////////////////////////////////////////////////////////////
-    int GetFrequency(void) const;
+    unsigned int GetFrequency(void) const;
 
 private:
     ///////////////////////////////////////////////////////////////////////////

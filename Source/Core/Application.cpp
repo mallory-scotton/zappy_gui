@@ -32,6 +32,9 @@ bool Application::IsOpen(void) const
 ///////////////////////////////////////////////////////////////////////////////
 void Application::Update(void)
 {
+    GameState& gs = GameState::GetInstance();
+
+    gs.Update();
     m_renderer->Update();
     m_renderer->Display();
 }
