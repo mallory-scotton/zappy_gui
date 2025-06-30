@@ -80,8 +80,8 @@ void Gui::RenderCurrentGame(void)
     ImGui::Begin("Current Game");
 
     ImGui::Text("Current Frequency: %d", 0);
-    ImGui::Text("Players Alive: %d | Players Dead: %d",
-        0, 0);
+    ImGui::Text("Players Alive: %d", 0);
+    ImGui::Text("Players Dead: %d", 0);
 
     //TODO: team names here
 
@@ -102,7 +102,7 @@ void Gui::RenderCurrentGame(void)
     ImGui::Separator();
     ImGui::Dummy(ImVec2(0.0f, 5.0f));
 
-    ImGui::Text("Players Alive:");
+    ImGui::Text("Players per Team:");
     //TODO: players alive here per team per level
     // use tree node ?
 
@@ -113,7 +113,23 @@ void Gui::RenderCurrentGame(void)
 void Gui::RenderTileInspector(void)
 {
     ImGui::Begin("Tile Inspector");
-    ImGui::Text("Inspect tiles and their properties here.");
+
+    //TODO: get the current tile and pos
+    ImGui::Text("Current Tile: (%d, %d)", 0, 0);
+
+    ImGui::Text("Resources:");
+    ImGui::Text("Food: %d", 0);
+    ImGui::Text("Linemate: %d", 0);
+    ImGui::Text("Deraumere: %d", 0);
+    ImGui::Text("Sibur: %d", 0);
+    ImGui::Text("Mendiane: %d", 0);
+    ImGui::Text("Phiras: %d", 0);
+    ImGui::Text("Thystame: %d", 0);
+
+    ImGui::Separator();
+    //TODO: list players on tile with level and inv
+    ImGui::Text("Players on Tile: %d", 0);
+
     ImGui::End();
 }
 
