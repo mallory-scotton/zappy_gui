@@ -2,6 +2,7 @@
 // Dependencies
 ///////////////////////////////////////////////////////////////////////////////
 #include "Graphics/Gui.hpp"
+#include "Game/GameState.hpp"
 #include "Errors/ImGuiException.hpp"
 #include "Libraries/imgui.h"
 #include "Libraries/imgui-SFML.h"
@@ -16,6 +17,8 @@ namespace Zappy
 ///////////////////////////////////////////////////////////////////////////////
 Gui::Gui(sf::RenderWindow& window)
     : m_window(window)
+    , m_currentX(0)
+    , m_currentY(0)
 {
     if (!ImGui::SFML::Init(m_window))
     {
@@ -69,21 +72,91 @@ void Gui::RenderViewport(unsigned int viewport)
 ///////////////////////////////////////////////////////////////////////////////
 void Gui::RenderLogs(void)
 {
+    GameState& gs = GameState::GetInstance();
+
     ImGui::Begin("Logs");
-    ImGui::Text("Log messages will appear here.");
+
+    ImGui::Text("Game Logs:");
+    const auto& logs = gs.GetMessages();
+
+    ImGui::Text("Filters:");
+
+    ImGui::Checkbox("Broadcast", &m_BroadcastLogs);
+    ImGui::SameLine();
+    ImGui::Checkbox("Egg", &m_EggLogs);
+    ImGui::SameLine();
+    ImGui::Checkbox("Event", &m_EventLogs);
+
+    ImGui::Checkbox("Incantation", &m_IncantationLogs);
+    ImGui::SameLine();
+    ImGui::Checkbox("Resource", &m_ResourceLogs);
+    ImGui::SameLine();
+    ImGui::Checkbox("Death", &m_DeathLogs);
+
+    ImGui::Checkbox("Victory", &m_VictoryLogs);
+    ImGui::SameLine();
+    ImGui::Checkbox("Info", &m_InfoLogs);
+    ImGui::SameLine();
+    ImGui::Checkbox("Error", &m_ErrorLogs);
+
+    ImGui::Separator();
+
+    for (auto it = logs.rbegin(); it != logs.rend(); ++it)
+    {
+        const auto& log = *it;
+        const std::string& type = log.GetType();
+
+        // Filter based on log type
+        bool showLog = false;
+
+        if (type == "Broadcast" && m_BroadcastLogs)
+            showLog = true;
+        else if (type == "Egg" && m_EggLogs)
+            showLog = true;
+        else if (type == "Event" && m_EventLogs)
+            showLog = true;
+        else if (type == "Incantation" && m_IncantationLogs)
+            showLog = true;
+        else if (type == "Resource" && m_ResourceLogs)
+            showLog = true;
+        else if (type == "Death" && m_DeathLogs)
+            showLog = true;
+        else if (type == "Victory" && m_VictoryLogs)
+            showLog = true;
+        else if (type == "Info" && m_InfoLogs)
+            showLog = true;
+        else if (type == "Error" && m_ErrorLogs)
+            showLog = true;
+
+        if (showLog)
+        {
+            ImGui::Text("%s", log.GetContent().c_str());
+        }
+    }
+
     ImGui::End();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void Gui::RenderCurrentGame(void)
 {
+    GameState& gs = GameState::GetInstance();
+
     ImGui::Begin("Current Game");
 
-    ImGui::Text("Current Frequency: %d", 0);
-    ImGui::Text("Players Alive: %d", 0);
-    ImGui::Text("Players Dead: %d", 0);
+    ImGui::Text("Current Frequency: %d", gs.GetFrequency());
+    ImGui::Text("Map Size: %d x %d", gs.GetWidth(), gs.GetHeight());
+    ImGui::Text("Players Alive: %d", gs.GetLivingPlayers());
+    ImGui::Text("Players Dead: %d", gs.GetDeadPlayers());
 
-    //TODO: team names here
+    const auto& teams = gs.GetTeams();
+    ImGui::Text("Teams: %d", static_cast<int>(teams.size()));
+    ImGui::SameLine();
+    for (const auto& team : teams)
+    {
+        ImGui::Text("%s", team.GetName().c_str());
+        ImGui::SameLine();
+    }
 
     ImGui::Dummy(ImVec2(0.0f, 5.0f));
     ImGui::Separator();
@@ -103,8 +176,34 @@ void Gui::RenderCurrentGame(void)
     ImGui::Dummy(ImVec2(0.0f, 5.0f));
 
     ImGui::Text("Players per Team:");
-    //TODO: players alive here per team per level
-    // use tree node ?
+    for (const auto& team : teams)
+    {
+        if (ImGui::TreeNode(team.GetName().c_str()))
+        {
+            const auto& players = team.GetPlayers();
+            ImGui::Text("Players: %d", team.GetLivingPlayers());
+            std::vector<Player> sortedPlayers = players;
+
+            std::sort(sortedPlayers.begin(), sortedPlayers.end(),
+                [](const Player& a, const Player& b) {
+                    return a.GetLevel() > b.GetLevel();
+                });
+
+            for (const auto& player : sortedPlayers)
+            {
+                ImGui::Text("Player ID: %d, Level: %d", player.GetID(), player.GetLevel());
+                ImGui::Text("Inv: %d, %d, %d, %d, %d, %d, %d",
+                            player.GetInventory().food,
+                            player.GetInventory().linemate,
+                            player.GetInventory().deraumere,
+                            player.GetInventory().sibur,
+                            player.GetInventory().mendiane,
+                            player.GetInventory().phiras,
+                            player.GetInventory().thystame);
+            }
+            ImGui::TreePop();
+        }
+    }
 
     ImGui::End();
 }
@@ -112,21 +211,27 @@ void Gui::RenderCurrentGame(void)
 ///////////////////////////////////////////////////////////////////////////////
 void Gui::RenderTileInspector(void)
 {
+    GameState& gs = GameState::GetInstance();
+
     ImGui::Begin("Tile Inspector");
 
-    //TODO: get the current tile and pos
-    ImGui::Text("Current Tile: (%d, %d)", 0, 0);
+    ImGui::Text("Current Tile: (%d, %d)", m_currentX, m_currentY);
+
+    const Inventory& inv = gs.GetTileAt(m_currentX, m_currentY);
 
     ImGui::Text("Resources:");
-    ImGui::Text("Food: %d", 0);
-    ImGui::Text("Linemate: %d", 0);
-    ImGui::Text("Deraumere: %d", 0);
-    ImGui::Text("Sibur: %d", 0);
-    ImGui::Text("Mendiane: %d", 0);
-    ImGui::Text("Phiras: %d", 0);
-    ImGui::Text("Thystame: %d", 0);
+    ImGui::Text("Food: %d", inv.food);
+    ImGui::Text("Linemate: %d", inv.linemate);
+    ImGui::Text("Deraumere: %d", inv.deraumere);
+    ImGui::Text("Sibur: %d", inv.sibur);
+    ImGui::Text("Mendiane: %d", inv.mendiane);
+    ImGui::Text("Phiras: %d", inv.phiras);
+    ImGui::Text("Thystame: %d", inv.thystame);
 
+    ImGui::Dummy(ImVec2(0.0f, 5.0f));
     ImGui::Separator();
+    ImGui::Dummy(ImVec2(0.0f, 5.0f));
+
     //TODO: list players on tile with level and inv
     ImGui::Text("Players on Tile: %d", 0);
 

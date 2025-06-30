@@ -27,6 +27,19 @@ private:
     ///////////////////////////////////////////////////////////////////////////
     sf::RenderWindow& m_window; //<! The window to which the GUI is attached
     sf::Clock m_clock;          //<! Clock to manage frame time
+    int m_currentX;
+    int m_currentY;
+
+    bool m_EggLogs = true;
+    bool m_BroadcastLogs = true;
+    bool m_EventLogs = true;
+    bool m_IncantationLogs = true;
+    bool m_ResourceLogs = true;
+    bool m_DeathLogs = true;
+    bool m_VictoryLogs = true;
+    bool m_InfoLogs = true;
+    bool m_ErrorLogs = true;
+
 
 public:
     ///////////////////////////////////////////////////////////////////////////

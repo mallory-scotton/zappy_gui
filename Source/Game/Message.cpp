@@ -23,4 +23,22 @@ Message::Message(
     , m_timestamp(std::chrono::steady_clock::now())
 {}
 
+///////////////////////////////////////////////////////////////////////////////
+const std::string& Message::GetContent() const
+{
+    return m_content;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+const std::string& Message::GetType() const
+{
+    return m_type;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+const std::string& Message::GetSource() const
+{
+    return m_source;
+}
+
 } // !namespace Zappy
