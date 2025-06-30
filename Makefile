@@ -7,6 +7,8 @@
 
 TARGET			=	zappy_gui
 
+APPIMAGE_DIR	=	App
+
 CXX				=	g++
 CXXFLAGS		=	-Wall -Wextra -std=gnu++20
 LDFLAGS			=	-lsfml-graphics -lsfml-window -lsfml-system -lGL
@@ -65,3 +67,41 @@ fclean: clean
 	@rm -f $(TARGET)
 
 re: fclean all
+
+.PHONY: all clean fclean re tests unit_tests tests_run
+
+###############################################################################
+# AppImage creation
+###############################################################################
+
+download-x86_64:
+	@if [ ! -f linuxdeploy-x86_64.AppImage ]; then \
+		printf "$(YELLOW)[APPIMAGE]$(RESET) $(BOLD)Downloading LinuxDeploy$(RESET)\n"; \
+		echo "Downloading linuxdeploy-x86_64.AppImage..."; \
+		curl -L -o linuxdeploy-x86_64.AppImage https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage; \
+		chmod +x linuxdeploy-x86_64.AppImage; \
+	fi
+
+build-x86_64: download-x86_64 all
+	@printf "$(YELLOW)[APPIMAGE]$(RESET) $(BOLD)Preparing AppImage$(RESET)\n"
+	@rm -rf $(APPIMAGE_DIR)
+
+	@mkdir -p $(APPIMAGE_DIR)/usr/bin
+	@mkdir -p $(APPIMAGE_DIR)/usr/share/applications
+	@mkdir -p $(APPIMAGE_DIR)/usr/share/icons/hicolor/256x256/apps
+
+	@cp $(TARGET) $(APPIMAGE_DIR)/usr/bin/
+	@cp -r Assets $(APPIMAGE_DIR)/usr/share/
+
+	@cp Assets/zappy_gui.png $(APPIMAGE_DIR)/usr/share/icons/hicolor/256x256/apps/
+	@cp Assets/zappy_gui.png $(APPIMAGE_DIR)/
+
+	@echo "[Desktop Entry]\n\
+	Name=zappy_gui\n\
+	Exec=zappy_gui\n\
+	Icon=zappy_gui\n\
+	Type=Application\n\
+	Categories=Game;" > $(APPIMAGE_DIR)/usr/share/applications/zappy_gui.desktop
+
+	@printf "$(YELLOW)[APPIMAGE]$(RESET) $(BOLD)Building AppImage$(RESET)\n"
+	@./linuxdeploy-x86_64.AppImage --appdir $(APPIMAGE_DIR) --output appimage
