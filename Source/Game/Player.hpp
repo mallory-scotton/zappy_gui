@@ -9,6 +9,8 @@
 #include "Game/Inventory.hpp"
 #include <string>
 #include <tuple>
+#include <sstream>
+#include <vector>
 
 ///////////////////////////////////////////////////////////////////////////////
 // Namespace Zappy
@@ -17,24 +19,31 @@ namespace Zappy
 {
 
 ///////////////////////////////////////////////////////////////////////////////
-/// \brief
+/// \brief Class representing a player in the game
 ///
 ///////////////////////////////////////////////////////////////////////////////
 class Player
 {
+public:
+    ///////////////////////////////////////////////////////////////////////////
+    // Type definitions
+    ///////////////////////////////////////////////////////////////////////////
+    using Coordinates = std::tuple<unsigned int, unsigned int>;
+
 private:
     ///////////////////////////////////////////////////////////////////////////
     // Public members
     ///////////////////////////////////////////////////////////////////////////
-    unsigned int m_id;          //<! Player ID
-    std::string m_name;         //<! Player name
-    unsigned int m_x;           //<! Player X coordinate
-    unsigned int m_y;           //<! Player Y coordinate
-    unsigned int m_level;       //<! Player level
-    unsigned int m_orientation; //<! Player orientation
-    Inventory m_inventory;      //<! Player inventory
-    bool m_isAlive;             //<! Player alive status
-    std::string m_team;         //<! Player team name
+    unsigned int m_id;                  //<! Player ID
+    std::string m_name;                 //<! Player name
+    unsigned int m_x;                   //<! Player X coordinate
+    unsigned int m_y;                   //<! Player Y coordinate
+    unsigned int m_level;               //<! Player level
+    unsigned int m_orientation;         //<! Player orientation
+    Inventory m_inventory;              //<! Player inventory
+    bool m_isAlive;                     //<! Player alive status
+    std::string m_team;                 //<! Player team name
+    std::vector<Coordinates> m_path;    //<! Player path
 
 public:
     ///////////////////////////////////////////////////////////////////////////
@@ -127,12 +136,20 @@ public:
     const Inventory& GetInventory(void) const;
 
     ///////////////////////////////////////////////////////////////////////////
+    /// \brief Gets the player's path
+    ///
+    /// \return A vector of coordinates representing the player's path
+    ///
+    ///////////////////////////////////////////////////////////////////////////
+    const std::vector<Coordinates>& GetPath(void) const;
+
+    ///////////////////////////////////////////////////////////////////////////
     /// \brief Updates the player's inventory based on the provided PIN message
     ///
     /// \param pin The PIN message string containing inventory data
     ///
     ///////////////////////////////////////////////////////////////////////////
-    void UpdateInventory(const std::string& pin);
+    void UpdateInventory(std::istringstream& pin);
 
     ///////////////////////////////////////////////////////////////////////////
     /// \brief Updates the player's position based on the provided PPO message
@@ -140,7 +157,7 @@ public:
     /// \param ppo The player position update string
     ///
     ///////////////////////////////////////////////////////////////////////////
-    void UpdatePosition(const std::string& ppo);
+    void UpdatePosition(std::istringstream& ppo);
 
     ///////////////////////////////////////////////////////////////////////////
     /// \brief Updates the player's level based on the provided PLV message
@@ -148,7 +165,7 @@ public:
     /// \param plv The player level update string
     ///
     ///////////////////////////////////////////////////////////////////////////
-    void UpdateLevel(const std::string& plv);
+    void UpdateLevel(std::istringstream& plv);
 
     ///////////////////////////////////////////////////////////////////////////
     /// \brief Sets the player's alive status

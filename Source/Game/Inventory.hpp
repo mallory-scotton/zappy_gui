@@ -47,7 +47,7 @@ public:
     /// \param content The content string to parse
     ///
     ///////////////////////////////////////////////////////////////////////////
-    void ParseContent(const std::string& content);
+    void ParseContent(std::istringstream& content);
 };
 
 } // !namespace Zappy

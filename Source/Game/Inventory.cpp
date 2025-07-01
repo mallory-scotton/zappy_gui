@@ -21,17 +21,15 @@ Inventory::Inventory(void)
 {}
 
 ///////////////////////////////////////////////////////////////////////////////
-void Inventory::ParseContent(const std::string& content)
+void Inventory::ParseContent(std::istringstream& content)
 {
-    std::istringstream iss(content);
-
-    iss >> food
-        >> linemate
-        >> deraumere
-        >> sibur
-        >> mendiane
-        >> phiras
-        >> thystame;
+    content >> food
+            >> linemate
+            >> deraumere
+            >> sibur
+            >> mendiane
+            >> phiras
+            >> thystame;
 }
 
 } // !namespace Zappy

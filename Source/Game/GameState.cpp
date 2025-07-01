@@ -196,7 +196,7 @@ void GameState::ParseBCT(const std::string& msg)
 
     unsigned int index = y * m_width + x;
 
-    m_tiles[index].ParseContent(iss.str());
+    m_tiles[index].ParseContent(iss);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -212,8 +212,6 @@ void GameState::ParseTNA(const std::string& msg)
         Team team(name);
         m_teams.push_back(team);
     }
-
-    std::cout << "Team added: " << name << std::endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -239,7 +237,7 @@ void GameState::ParsePPO(const std::string& msg)
 {
     std::istringstream iss(msg);
 
-    try { GetPlayerByID(iss).UpdatePosition(iss.str()); }
+    try { GetPlayerByID(iss).UpdatePosition(iss); }
     catch (...) {}
 }
 
@@ -248,7 +246,7 @@ void GameState::ParsePLV(const std::string& msg)
 {
     std::istringstream iss(msg);
 
-    try { GetPlayerByID(iss).UpdateLevel(iss.str()); }
+    try { GetPlayerByID(iss).UpdateLevel(iss); }
     catch (...) {}
 }
 
@@ -257,7 +255,7 @@ void GameState::ParsePIN(const std::string& msg)
 {
     std::istringstream iss(msg);
 
-    try { GetPlayerByID(iss).UpdateInventory(iss.str()); }
+    try { GetPlayerByID(iss).UpdateInventory(iss); }
     catch (...) {}
 }
 

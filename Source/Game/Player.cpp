@@ -3,6 +3,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 #include "Game/Player.hpp"
 #include <sstream>
+#include <iostream>
 
 ///////////////////////////////////////////////////////////////////////////////
 // Namespace Zappy
@@ -93,25 +94,35 @@ const Inventory& Player::GetInventory(void) const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void Player::UpdateInventory(const std::string& pin)
+const std::vector<Player::Coordinates>& Player::GetPath(void) const
+{
+    return (m_path);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void Player::UpdateInventory(std::istringstream& pin)
 {
     m_inventory.ParseContent(pin);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void Player::UpdatePosition(const std::string& ppo)
+void Player::UpdatePosition(std::istringstream& ppo)
 {
-    std::istringstream iss(ppo);
+    unsigned int oldX = m_x;
+    unsigned int oldY = m_y;
 
-    iss >> m_x >> m_y >> m_orientation;
+    ppo >> m_x >> m_y >> m_orientation;
+
+    if (oldX != m_x || oldY != m_y)
+    {
+        m_path.emplace_back(oldX, oldY);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void Player::UpdateLevel(const std::string& plv)
+void Player::UpdateLevel(std::istringstream& plv)
 {
-    std::istringstream iss(plv);
-
-    iss >> m_level;
+    plv >> m_level;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
