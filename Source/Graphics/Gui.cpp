@@ -205,13 +205,48 @@ void Gui::RenderCurrentGame(void)
     ImGui::Dummy(ImVec2(0.0f, 5.0f));
 
     ImGui::Text("Total Resources:");
-    ImGui::Text("Food: %d", 0);
-    ImGui::Text("Linemate: %d", 0);
-    ImGui::Text("Deraumere: %d", 0);
-    ImGui::Text("Sibur: %d", 0);
-    ImGui::Text("Mendiane: %d", 0);
-    ImGui::Text("Phiras: %d", 0);
-    ImGui::Text("Thystame: %d", 0);
+
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.8f, 0.5f, 1.0f));
+    ImGui::Text("Food:");
+    ImGui::PopStyleColor();
+    ImGui::SameLine();
+    ImGui::Text("%d", 0);
+
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.7f, 0.7f, 0.7f, 1.0f));
+    ImGui::Text("Linemate:");
+    ImGui::PopStyleColor();
+    ImGui::SameLine();
+    ImGui::Text("%d", 0);
+
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.3f, 0.6f, 0.9f, 1.0f));
+    ImGui::Text("Deraumere:");
+    ImGui::PopStyleColor();
+    ImGui::SameLine();
+    ImGui::Text("%d", 0);
+
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.9f, 0.6f, 0.3f, 1.0f));
+    ImGui::Text("Sibur:");
+    ImGui::PopStyleColor();
+    ImGui::SameLine();
+    ImGui::Text("%d", 0);
+
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.8f, 0.5f, 0.8f, 1.0f));
+    ImGui::Text("Mendiane:");
+    ImGui::PopStyleColor();
+    ImGui::SameLine();
+    ImGui::Text("%d", 0);
+
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.9f, 1.0f));
+    ImGui::Text("Phiras:");
+    ImGui::PopStyleColor();
+    ImGui::SameLine();
+    ImGui::Text("%d", 0);
+
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.8f, 0.0f, 1.0f));
+    ImGui::Text("Thystame:");
+    ImGui::PopStyleColor();
+    ImGui::SameLine();
+    ImGui::Text("%d", 0);
 
     ImGui::Dummy(ImVec2(0.0f, 5.0f));
     ImGui::Separator();
