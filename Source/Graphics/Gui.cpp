@@ -65,7 +65,15 @@ void Gui::Render(Viewport& viewport)
 void Gui::RenderViewport(Viewport& viewport)
 {
     ImGui::Begin("Viewport");
-    ImGui::Text("Rendering viewport: %d", viewport);
+
+    ImVec2 size = ImGui::GetContentRegionAvail();
+
+    viewport.Resize(
+        static_cast<unsigned int>(size.x),
+        static_cast<unsigned int>(size.y)
+    );
+
+    ImGui::Image(viewport.GetTextureID(), size, ImVec2(0, 1), ImVec2(1, 0));
     ImGui::End();
 }
 

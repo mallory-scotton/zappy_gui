@@ -38,8 +38,8 @@ private:
     ///////////////////////////////////////////////////////////////////////////
     sf::View m_view;                //< The SFML view for the viewport
     sf::RenderTexture m_texture;    //< The texture used for rendering
-    sf::RenderTexture m_grid;       //< The texture for the grid
     float m_zoom;                   //< The zoom level of the viewport
+    float m_tileSize;               //< The size of the tiles in the viewport
 
 public:
     ///////////////////////////////////////////////////////////////////////////
@@ -69,8 +69,10 @@ public:
     /// \param width The width of the viewport
     /// \param height The height of the viewport
     ///
+    /// \return True if the viewport was resized successfully, false otherwise
+    ///
     ///////////////////////////////////////////////////////////////////////////
-    void Resize(unsigned int width, unsigned int height);
+    bool Resize(unsigned int width, unsigned int height);
 
     ///////////////////////////////////////////////////////////////////////////
     /// \brief Get the size of the viewport

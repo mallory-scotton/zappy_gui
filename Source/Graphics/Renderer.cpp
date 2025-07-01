@@ -61,7 +61,7 @@ void Renderer::Display(void)
 {
     m_window.clear();
     m_viewport.Render();
-    m_gui.Render(m_viewport.GetTextureID());
+    m_gui.Render(m_viewport);
     m_window.display();
 }
 
