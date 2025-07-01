@@ -117,4 +117,28 @@ void Inventory::DrawInvNumb(void) const
     ImGui::PopStyleColor();
 }
 
+///////////////////////////////////////////////////////////////////////////////
+void Inventory::Reset(void)
+{
+    food = 0;
+    linemate = 0;
+    deraumere = 0;
+    sibur = 0;
+    mendiane = 0;
+    phiras = 0;
+    thystame = 0;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void Inventory::Add(const Inventory& other)
+{
+    food += other.food;
+    linemate += other.linemate;
+    deraumere += other.deraumere;
+    sibur += other.sibur;
+    mendiane += other.mendiane;
+    phiras += other.phiras;
+    thystame += other.thystame;
+}
+
 } // !namespace Zappy

@@ -52,7 +52,9 @@ GameState::GameState()
     , m_frequency(0)
     , m_livingPlayers(0)
     , m_deadPlayers(0)
-{}
+{
+    m_totalResources.Reset();
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 bool GameState::Connect(const std::string& host, int port)
@@ -152,6 +154,25 @@ const std::vector<Team>& GameState::GetTeams(void) const
 const std::vector<Message>& GameState::GetMessages(void) const
 {
     return (m_messages);
+}
+
+const Inventory& GameState::GetTotalResources(void)
+{
+    m_totalResources.Reset();
+
+    for (const auto& tile : m_tiles) {
+        m_totalResources.Add(tile);
+    }
+
+    for (const auto& team : m_teams) {
+        for (const auto& player : team.GetPlayers()) {
+            if (player.IsAlive()) {
+                m_totalResources.Add(player.GetInventory());
+            }
+        }
+    }
+
+    return m_totalResources;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -34,13 +34,13 @@ private:
 
     bool m_EggLogs = true;
     bool m_BroadcastLogs = true;
-    bool m_EventLogs = true;
+    bool m_EventLogs = false;
     bool m_IncantationLogs = true;
     bool m_ResourceLogs = true;
-    bool m_DeathLogs = true;
+    bool m_DeathLogs = false;
     bool m_VictoryLogs = true;
-    bool m_InfoLogs = true;
-    bool m_ErrorLogs = true;
+    bool m_InfoLogs = false;
+    bool m_ErrorLogs = false;
 
 
 public:

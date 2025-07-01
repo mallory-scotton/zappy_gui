@@ -56,6 +56,7 @@ private:
     unsigned int m_frequency;           //<! Frequency of the game updates
     unsigned int m_livingPlayers;       //<! Number of living players
     unsigned int m_deadPlayers;         //<! Number of dead players
+    Inventory m_totalResources;         //<! Total resources in the game state
 
 private:
     ///////////////////////////////////////////////////////////////////////////
@@ -157,6 +158,15 @@ public:
     ///
     ///////////////////////////////////////////////////////////////////////////
     const std::vector<Message>& GetMessages(void) const;
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    /// \brief Get the total resources in the game state
+    ///
+    /// \return A reference to the Inventory object representing the total
+    ///
+    ///////////////////////////////////////////////////////////////////////////
+    const Inventory& GetTotalResources(void);
 
     ///////////////////////////////////////////////////////////////////////////
     /// \brief Get the frequency of the game updates

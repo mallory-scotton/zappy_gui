@@ -96,25 +96,27 @@ void Gui::RenderLogs(void)
     ImGui::Text("Game Logs:");
     const auto& logs = gs.GetMessages();
 
-    ImGui::Text("Filters:");
+    if (ImGui::TreeNode("Filter Options"))
+    {
+        ImGui::Checkbox("Broadcast", &m_BroadcastLogs);
+        ImGui::SameLine();
+        ImGui::Checkbox("Egg", &m_EggLogs);
+        ImGui::SameLine();
+        ImGui::Checkbox("Event", &m_EventLogs);
 
-    ImGui::Checkbox("Broadcast", &m_BroadcastLogs);
-    ImGui::SameLine();
-    ImGui::Checkbox("Egg", &m_EggLogs);
-    ImGui::SameLine();
-    ImGui::Checkbox("Event", &m_EventLogs);
+        ImGui::Checkbox("Incantation", &m_IncantationLogs);
+        ImGui::SameLine();
+        ImGui::Checkbox("Resource", &m_ResourceLogs);
+        ImGui::SameLine();
+        ImGui::Checkbox("Death", &m_DeathLogs);
 
-    ImGui::Checkbox("Incantation", &m_IncantationLogs);
-    ImGui::SameLine();
-    ImGui::Checkbox("Resource", &m_ResourceLogs);
-    ImGui::SameLine();
-    ImGui::Checkbox("Death", &m_DeathLogs);
-
-    ImGui::Checkbox("Victory", &m_VictoryLogs);
-    ImGui::SameLine();
-    ImGui::Checkbox("Info", &m_InfoLogs);
-    ImGui::SameLine();
-    ImGui::Checkbox("Error", &m_ErrorLogs);
+        ImGui::Checkbox("Victory", &m_VictoryLogs);
+        ImGui::SameLine();
+        ImGui::Checkbox("Info", &m_InfoLogs);
+        ImGui::SameLine();
+        ImGui::Checkbox("Error", &m_ErrorLogs);
+        ImGui::TreePop();
+    }
 
     ImGui::Separator();
 
@@ -206,7 +208,7 @@ void Gui::RenderCurrentGame(void)
 
     ImGui::Text("Total Resources:");
 
-    const Inventory& totalResources = gs.GetTileAt(0, 0); //TODO: get the total resources
+    const Inventory& totalResources = gs.GetTotalResources();
 
     totalResources.DrawInvText();
 
@@ -283,6 +285,7 @@ void Gui::RenderTileInspector(void)
             {
                 ImGui::Text("%s (ID: %d, Level: %d)", player.GetName().c_str(),
                             player.GetID(), player.GetLevel());
+                player.GetInventory().DrawInvNumb();
             }
         }
 
