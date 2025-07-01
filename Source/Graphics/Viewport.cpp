@@ -321,7 +321,7 @@ void Viewport::RenderPlayers(void)
                     triangle.setFillColor(teamColors[player->GetTeam()]);
                     triangle.setPosition(posX, posY);
                     triangle.setRotation(
-                        90.f * static_cast<float>(orientation)
+                        90.f * (static_cast<float>(orientation) - 1.f)
                     );
                     m_texture.draw(triangle);
                     dirs.push_back(orientation);
