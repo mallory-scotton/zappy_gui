@@ -73,6 +73,9 @@ void Gui::RenderViewport(Viewport& viewport)
     ImGui::PopStyleVar();
 
     ImVec2 size = ImGui::GetContentRegionAvail();
+    ImVec2 position = ImGui::GetWindowPos();
+
+    viewport.SetViewportPosition(position.x, position.y);
 
     viewport.Resize(
         static_cast<unsigned int>(size.x),
