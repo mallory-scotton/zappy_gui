@@ -96,12 +96,12 @@ build-x86_64: download-x86_64 all
 	@cp Assets/zappy_gui.png $(APPIMAGE_DIR)/usr/share/icons/hicolor/256x256/apps/
 	@cp Assets/zappy_gui.png $(APPIMAGE_DIR)/
 
-	@echo "[Desktop Entry]\n\
+	@printf "[Desktop Entry]\n\
 	Name=zappy_gui\n\
 	Exec=zappy_gui\n\
 	Icon=zappy_gui\n\
 	Type=Application\n\
-	Categories=Game;" > $(APPIMAGE_DIR)/usr/share/applications/zappy_gui.desktop
+	Categories=Game;\n" > $(APPIMAGE_DIR)/usr/share/applications/zappy_gui.desktop
 
 	@printf "$(YELLOW)[APPIMAGE]$(RESET) $(BOLD)Building AppImage$(RESET)\n"
 	@./linuxdeploy-x86_64.AppImage --appdir $(APPIMAGE_DIR) --output appimage > /dev/null
