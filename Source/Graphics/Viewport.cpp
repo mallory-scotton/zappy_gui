@@ -82,7 +82,7 @@ void Viewport::RenderGrid(void)
     float tileHeight = static_cast<float>(size.y) / height;
     m_tileSize = std::min(tileWidth, tileHeight);
 
-    sf::RectangleShape tile(sf::Vector2f(m_tileSize - 2.f, m_tileSize - 2.f));
+    sf::RectangleShape tile(sf::Vector2f(m_tileSize - 1.f, m_tileSize - 1.f));
 
     tile.setFillColor(sf::Color::Transparent);
     tile.setOutlineThickness(1.f);

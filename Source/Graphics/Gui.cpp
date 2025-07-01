@@ -64,7 +64,13 @@ void Gui::Render(Viewport& viewport)
 ///////////////////////////////////////////////////////////////////////////////
 void Gui::RenderViewport(Viewport& viewport)
 {
-    ImGui::Begin("Viewport");
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+    ImGui::Begin("Viewport", nullptr,
+        ImGuiWindowFlags_NoBackground |
+        ImGuiWindowFlags_NoTitleBar |
+        ImGuiWindowFlags_NoCollapse
+    );
+    ImGui::PopStyleVar();
 
     ImVec2 size = ImGui::GetContentRegionAvail();
 
