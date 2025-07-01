@@ -171,14 +171,14 @@ private:
     ///////////////////////////////////////////////////////////////////////////
     const std::vector<sf::Color> m_teamColors =
     {
-        sf::Color::Red,
-        sf::Color::Blue,
-        sf::Color::Green,
-        sf::Color::Yellow,
-        sf::Color::Magenta,
-        sf::Color::Cyan,
-        sf::Color(255, 165, 0),   // Orange
-        sf::Color(128, 0, 128)    // Purple
+        sf::Color(255, 182, 193),  // Pastel Red (Light Pink)
+        sf::Color(173, 216, 230),  // Pastel Blue (Light Blue)
+        sf::Color(144, 238, 144),  // Pastel Green (Light Green)
+        sf::Color(255, 255, 224),  // Pastel Yellow (Light Yellow)
+        sf::Color(221, 160, 221),  // Pastel Magenta (Plum)
+        sf::Color(175, 238, 238),  // Pastel Cyan (Light Cyan)
+        sf::Color(255, 218, 185),  // Pastel Orange (Peach)
+        sf::Color(230, 190, 255)   // Pastel Purple (Lavender)
     };
 
 public:

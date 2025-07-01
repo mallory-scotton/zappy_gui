@@ -25,8 +25,10 @@ Viewport::Viewport(void)
 {
     Resize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
-    if (m_font.loadFromFile("Assets/Fonts/Arial.ttf"))
-    {
+    if (std::getenv("APPDIR") != nullptr && m_font.loadFromFile("APPDIR/usr/share/Assets/Fonts/Arial.ttf")) {
+        m_fontLoaded = true;
+        m_text.setFont(m_font);
+    } else if (m_font.loadFromFile("Assets/Fonts/Arial.ttf")) {
         m_fontLoaded = true;
         m_text.setFont(m_font);
     }
@@ -198,14 +200,6 @@ void Viewport::Render(void)
 {
     GameState& gs = GameState::GetInstance();
 
-    // TODO: Remove this thing here
-    // if (!gs.HasChanged() && !m_forceRender)
-    // {
-    //     UpdateAndRenderAnimations();
-    //     m_texture.display();
-    //     return;
-    // }
-
     m_forceRender = false;
 
     m_texture.clear(sf::Color(20, 20, 20));
@@ -252,10 +246,10 @@ void Viewport::RenderGrid(void)
             const Inventory& tileInventory = gs.GetTileAt(x, y);
 
             if (m_fontLoaded) {
-                float offsetX = 2.0f;
-                float offsetY = 2.0f;
-                float lineSpacing = 8.0f;
-                m_text.setCharacterSize(8);
+                float offsetX = TILE_SIZE * 0.03f;  // 3% of tile size
+                float offsetY = TILE_SIZE * 0.03f;  // 3% of tile size
+                float lineSpacing = TILE_SIZE * 0.125f;  // 12.5% of tile size
+                m_text.setCharacterSize(static_cast<unsigned int>(TILE_SIZE * 0.125f));  // 12.5% of tile size
 
                 auto& resources = GetResources(tileInventory);
 
@@ -368,35 +362,39 @@ std::vector<Viewport::ResourceDisplay>& Viewport::GetResources(const Inventory& 
 ///////////////////////////////////////////////////////////////////////////////
 void Viewport::RenderWinner(const Team& team)
 {
+    GameState& gs = GameState::GetInstance();
+    auto [mapWidth, mapHeight] = gs.GetDimensions();
     sf::Vector2u size = m_texture.getSize();
-    float centerX = static_cast<float>(size.x) / 2.0f;
-    float centerY = static_cast<float>(size.y) / 2.0f;
 
-    // Save current view and set to default view for UI elements
-    sf::View currentView = m_texture.getView();
-    m_texture.setView(m_texture.getDefaultView());
+    float gridCenterX = static_cast<float>(mapWidth * TILE_SIZE) / 2.0f;
+    float gridCenterY = static_cast<float>(mapHeight * TILE_SIZE) / 2.0f;
 
-    // Create background box
+    sf::View originalView = m_texture.getView();
+
+    sf::View winnerView = m_view;
+    winnerView.setCenter(gridCenterX, gridCenterY);
+    m_texture.setView(winnerView);
+
     sf::RectangleShape background;
     background.setSize(sf::Vector2f(size.x * 0.7f, size.y * 0.3f));
     background.setFillColor(sf::Color(0, 0, 0, 200));
     background.setOrigin(background.getSize().x / 2.0f, background.getSize().y / 2.0f);
-    background.setPosition(centerX, centerY);
+    background.setPosition(gridCenterX, gridCenterY);
     background.setOutlineThickness(4.0f);
     background.setOutlineColor(team.GetColor());
     m_texture.draw(background);
 
     if (m_fontLoaded) {
-        // Create winner text
         m_text.setString("WINNER: " + team.GetName());
         m_text.setCharacterSize(42);
         m_text.setFillColor((team.GetColor()));
         m_text.setStyle(sf::Text::Bold);
-
-        // Center the text
+        m_text.setPosition(gridCenterX, gridCenterY);
         sf::FloatRect textBounds = m_text.getLocalBounds();
         m_text.setOrigin(textBounds.width / 2.0f, textBounds.height / 2.0f);
+        m_texture.draw(m_text);
     }
+    m_texture.setView(originalView);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -411,7 +409,7 @@ void Viewport::ProcessAnimationEvents(void)
         Animation animation(
             event->x * TILE_SIZE + (TILE_SIZE/2),
             event->y * TILE_SIZE + (TILE_SIZE/2),
-            100.0f, event->duration
+            TILE_SIZE * 1.5625f, event->duration
         );
 
         switch (event->type)

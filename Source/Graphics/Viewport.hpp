@@ -35,7 +35,7 @@ private:
     static constexpr float DEFAULT_ZOOM = 1.0f;
     static constexpr float MIN_ZOOM = 0.1f;
     static constexpr float MAX_ZOOM = 1.2f;
-    static constexpr float TILE_SIZE = 64.0f;
+    static constexpr float TILE_SIZE = 128.0f;
 
 private:
     ///////////////////////////////////////////////////////////////////////////
