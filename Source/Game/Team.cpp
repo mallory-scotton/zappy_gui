@@ -11,9 +11,10 @@ namespace Zappy
 {
 
 ///////////////////////////////////////////////////////////////////////////////
-Team::Team(const std::string& name)
+Team::Team(const std::string& name, const sf::Color& color)
     : m_name(name)
     , m_deadPlayers(0)
+    , m_color(color)
 {}
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -68,6 +69,12 @@ unsigned int Team::GetLivingPlayers(void) const
 unsigned int Team::GetDeadPlayersCount(void) const
 {
     return (m_deadPlayers);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+const sf::Color& Team::GetColor(void) const
+{
+    return (m_color);
 }
 
 } // !namespace Zappy

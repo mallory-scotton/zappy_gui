@@ -177,7 +177,9 @@ void Gui::RenderCurrentGame(void)
     ImGui::SameLine();
     for (const auto& team : teams)
     {
+        ImGui::PushStyleColor(ImGuiCol_Text, ConvertColor(team.GetColor()));
         ImGui::Text("%s", team.GetName().c_str());
+        ImGui::PopStyleColor();
         ImGui::SameLine();
     }
 
@@ -201,6 +203,8 @@ void Gui::RenderCurrentGame(void)
     ImGui::Text("Players per Team:");
     for (const auto& team : teams)
     {
+        ImGui::PushStyleColor(ImGuiCol_Text, ConvertColor(team.GetColor()));
+
         const auto& players = team.GetPlayers();
 
         std::array<int, 9> levelCount = {};
@@ -230,6 +234,7 @@ void Gui::RenderCurrentGame(void)
             }
             ImGui::TreePop();
         }
+        ImGui::PopStyleColor();
     }
 
     ImGui::End();
@@ -384,6 +389,17 @@ void Gui::SetupImGuiStyle(void)
     style.GrabRounding = 0.0f;
     style.ScrollbarRounding = 0.0f;
     style.TabRounding = 0.0f;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+ImVec4 Gui::ConvertColor(const sf::Color& color) const
+{
+    return ImVec4(
+        color.r / 255.0f,
+        color.g / 255.0f,
+        color.b / 255.0f,
+        color.a / 255.0f
+    );
 }
 
 } // !namespace Zappy
