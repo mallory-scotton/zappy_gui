@@ -22,6 +22,7 @@
 #include <mutex>
 #include <atomic>
 #include <condition_variable>
+#include <optional>
 
 ///////////////////////////////////////////////////////////////////////////////
 // Namespace Zappy
@@ -35,6 +36,19 @@ namespace Zappy
 ///////////////////////////////////////////////////////////////////////////////
 class GameState : public Singleton<GameState>
 {
+public:
+    ///////////////////////////////////////////////////////////////////////////
+    /// \brief
+    ///
+    ///////////////////////////////////////////////////////////////////////////
+    enum class AnimationType
+    {
+        Broadcast,
+        IncantationStart,
+        IncantationSuccess,
+        IncantationFail
+    };
+
 public:
     ///////////////////////////////////////////////////////////////////////////
     /// \brief
@@ -77,6 +91,48 @@ private:
     ///////////////////////////////////////////////////////////////////////////
     using Command = std::function<void(const std::string&)>;
 
+    ///////////////////////////////////////////////////////////////////////////
+    /// \brief
+    ///
+    ///////////////////////////////////////////////////////////////////////////
+    struct AnimationEvent
+    {
+    public:
+        ///////////////////////////////////////////////////////////////////////
+        // Public: members
+        ///////////////////////////////////////////////////////////////////////
+        AnimationType type;
+        unsigned int x;
+        unsigned int y;
+        float duration;
+        const Team& team;
+
+    public:
+        ///////////////////////////////////////////////////////////////////////
+        /// \brief
+        ///
+        /// \param t
+        /// \param posX
+        /// \param posY
+        /// \param dur
+        /// \param team
+        ///
+        ///////////////////////////////////////////////////////////////////////
+        AnimationEvent(
+            AnimationType t,
+            unsigned int posX,
+            unsigned int posY,
+            float dur,
+            const Team& team
+        )
+            : type(t)
+            , x(posX)
+            , y(posY)
+            , duration(dur)
+            , team(team)
+            {}
+    };
+
 private:
     ///////////////////////////////////////////////////////////////////////////
     // Private members
@@ -107,30 +163,7 @@ private:
 
     bool m_hasWin;                      //<! Flag to indicate if there is a winner
     Team m_winner;                      //<! The winning team
-
-public:
-    enum class AnimationType {
-        Broadcast,
-        IncantationStart,
-        IncantationSuccess,
-        IncantationFail
-    };
-
-private:
-    struct AnimationEvent {
-    AnimationType type;
-    unsigned int x;
-    unsigned int y;
-    float duration;
-    Team team; // For team-colored animations
-
-    AnimationEvent(AnimationType t, unsigned int posX, unsigned int posY,
-                  float dur = 2.0f, const Team& team = Team("Default", sf::Color::White))
-        : type(t), x(posX), y(posY), duration(dur), team(team) {}
-    };
-
-// Replace std::vector<Animation> with:
-    std::vector<AnimationEvent> m_animationEvents;
+    std::deque<AnimationEvent> m_anims; //<! Animation events for visualization
 
 private:
     ///////////////////////////////////////////////////////////////////////////
@@ -338,8 +371,28 @@ public:
     ///////////////////////////////////////////////////////////////////////////
     const Team& GetWinner(void) const;
 
-    const std::vector<AnimationEvent>& GetAnimationEvents(void) const;
+    ///////////////////////////////////////////////////////////////////////////
+    /// \brief
+    ///
+    /// \return
+    ///
+    ///////////////////////////////////////////////////////////////////////////
+    const std::deque<AnimationEvent>& GetAnimationEvents(void) const;
 
+    ///////////////////////////////////////////////////////////////////////////
+    /// \brief
+    ///
+    /// \return
+    ///
+    ///////////////////////////////////////////////////////////////////////////
+    std::optional<AnimationEvent> PopAnimation(void);
+
+    ///////////////////////////////////////////////////////////////////////////
+    /// \brief
+    ///
+    /// \return
+    ///
+    ///////////////////////////////////////////////////////////////////////////
     void ClearAnimationEvents(void);
 
 

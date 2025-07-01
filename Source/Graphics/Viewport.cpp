@@ -24,7 +24,9 @@ Viewport::Viewport(void)
     , m_forceRender(false)
 {
     Resize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-    if (m_font.loadFromFile("Assets/Fonts/Arial.ttf")) {
+
+    if (m_font.loadFromFile("Assets/Fonts/Arial.ttf"))
+    {
         m_fontLoaded = true;
         m_text.setFont(m_font);
     }
@@ -196,12 +198,13 @@ void Viewport::Render(void)
 {
     GameState& gs = GameState::GetInstance();
 
-    if (!gs.HasChanged() && !m_forceRender)
-    {
-        UpdateAndRenderAnimations();
-        m_texture.display();
-        return;
-    }
+    // TODO: Remove this thing here
+    // if (!gs.HasChanged() && !m_forceRender)
+    // {
+    //     UpdateAndRenderAnimations();
+    //     m_texture.display();
+    //     return;
+    // }
 
     m_forceRender = false;
 
@@ -257,7 +260,8 @@ void Viewport::RenderGrid(void)
                 auto& resources = GetResources(tileInventory);
 
                 float yPos = posY + offsetY;
-                for (const auto& res : resources) {
+                for (const auto& res : resources)
+                {
                     m_text.setFillColor(res.color);
                     m_text.setString(std::to_string(res.value));
                     m_text.setPosition(posX + offsetX, yPos);
@@ -358,7 +362,7 @@ std::vector<Viewport::ResourceDisplay>& Viewport::GetResources(const Inventory& 
     m_resources.push_back({inv.phiras, sf::Color(128, 128, 230), 'P'});
     m_resources.push_back({inv.thystame, sf::Color(255, 204, 0), 'T'});
 
-    return m_resources;
+    return (m_resources);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -399,20 +403,22 @@ void Viewport::RenderWinner(const Team& team)
 void Viewport::ProcessAnimationEvents(void)
 {
     GameState& gs = GameState::GetInstance();
-    const auto& events = gs.GetAnimationEvents();
 
-    for (const auto& event : events)
+    GameState::ScopedLock lock(gs);
+
+    while (const auto& event = gs.PopAnimation())
     {
         Animation animation(
-            event.x * TILE_SIZE + (TILE_SIZE/2),
-            event.y * TILE_SIZE + (TILE_SIZE/2),
-            100.0f, event.duration);
+            event->x * TILE_SIZE + (TILE_SIZE/2),
+            event->y * TILE_SIZE + (TILE_SIZE/2),
+            100.0f, event->duration
+        );
 
-        switch (event.type)
+        switch (event->type)
         {
             case GameState::AnimationType::Broadcast:
                 animation.SetCircle();
-                animation.SetColor(event.team.GetColor());
+                animation.SetColor(event->team.GetColor());
                 m_activeAnimations.push_back(animation);
                 break;
 
@@ -435,9 +441,6 @@ void Viewport::ProcessAnimationEvents(void)
                 break;
         }
     }
-
-    // Clear events after processing
-    gs.ClearAnimationEvents();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

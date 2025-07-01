@@ -350,26 +350,43 @@ bool GameState::HasChanged(void) const
 ///////////////////////////////////////////////////////////////////////////////
 bool GameState::HasWin(void) const
 {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     return (m_hasWin);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 const Team& GameState::GetWinner(void) const
 {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     return (m_winner);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-const std::vector<GameState::AnimationEvent>& GameState::GetAnimationEvents(void) const
+const std::deque<GameState::AnimationEvent>& GameState::GetAnimationEvents(void) const
 {
-    return m_animationEvents;
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
+    return (m_anims);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+std::optional<GameState::AnimationEvent> GameState::PopAnimation(void)
+{
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
+    if (m_anims.empty())
+    {
+        return (std::nullopt);
+    }
+    AnimationEvent event = m_anims.front();
+    m_anims.pop_front();
+    return (std::make_optional(event));
+}
+
+///////////////////////////////////////////////////////////////////////////////
 void GameState::ClearAnimationEvents(void)
 {
-    m_animationEvents.clear();
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
+    m_anims.clear();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -523,7 +540,7 @@ void GameState::ParsePBC(const std::string& msg)
         {
             if (team.GetName() == player.GetTeam())
             {
-                m_animationEvents.emplace_back(
+                m_anims.emplace_back(
                     AnimationType::Broadcast,
                     player.GetX(),
                     player.GetY(),
@@ -536,7 +553,6 @@ void GameState::ParsePBC(const std::string& msg)
 
     }
     catch (...) {}
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -566,9 +582,16 @@ void GameState::ParsePIC(const std::string& msg)
         "Server",
         true
     );
+
     m_hasChanged = true;
 
-    m_animationEvents.emplace_back(AnimationType::IncantationStart, x, y, 2.0f);
+    m_anims.emplace_back(
+        AnimationType::IncantationStart,
+        x,
+        y,
+        2.0f,
+        m_teams[0]
+    );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -589,10 +612,13 @@ void GameState::ParsePIE(const std::string& msg)
     );
     m_hasChanged = true;
 
-    m_animationEvents.emplace_back(
-        result == "1" ? AnimationType::IncantationSuccess : AnimationType::IncantationFail,
+    m_anims.emplace_back(
+        result == "1"
+            ? AnimationType::IncantationSuccess
+            : AnimationType::IncantationFail,
         x, y,
-        2.0f
+        2.0f,
+        m_teams[0]
     );
 }
 
