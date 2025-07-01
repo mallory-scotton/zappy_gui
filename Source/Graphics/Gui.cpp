@@ -236,19 +236,20 @@ void Gui::RenderCurrentGame(void)
             }
         }
 
-        std::string name = team.GetName() + " Level " + std::to_string(maxLevel);
-        if (ImGui::TreeNode(name.c_str()))
+        std::string displayName = team.GetName() + " Level " + std::to_string(maxLevel);
+        bool open = ImGui::TreeNode(team.GetName().c_str(), "%s", displayName.c_str());
+        ImGui::PopStyleColor();
+
+        if (open)
         {
             ImGui::Text("Players: %d | Max Level: %d", team.GetLivingPlayers(), maxLevel);
 
-            for (int level = 8; level > 0; level--)
-            {
+            for (int level = 8; level > 0; level--) {
                 ImGui::Separator();
                 ImGui::Text("Level %d: %d players", level, levelCount[level]);
             }
             ImGui::TreePop();
         }
-        ImGui::PopStyleColor();
     }
 
     ImGui::End();
