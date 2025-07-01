@@ -213,8 +213,6 @@ void GameState::ParseTNA(const std::string& msg)
         Team team(name, color);
         m_teams.push_back(team);
     }
-
-    std::cout << "Team added: " << name << std::endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
