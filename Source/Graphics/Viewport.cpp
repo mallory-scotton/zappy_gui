@@ -283,19 +283,19 @@ void Viewport::RenderPlayers(void)
 
             dirs.clear();
 
-            for (const auto& player : players)
+            for (const auto player : players)
             {
                 if (dirs.size() == 4)
                 {
                     break;
                 }
 
-                unsigned int orientation = player.GetOrientation();
+                unsigned int orientation = player->GetOrientation();
 
                 auto it = std::find(dirs.begin(), dirs.end(), orientation);
                 if (it == dirs.end())
                 {
-                    triangle.setFillColor(teamColors[player.GetTeam()]);
+                    triangle.setFillColor(teamColors[player->GetTeam()]);
                     triangle.setPosition(posX, posY);
                     triangle.setRotation(
                         90.f * static_cast<float>(orientation)
@@ -305,9 +305,9 @@ void Viewport::RenderPlayers(void)
                 }
             }
 
-            Player top = players.back();
+            const auto top = players.back();
             circle.setPosition(posX, posY);
-            circle.setFillColor(teamColors[top.GetTeam()]);
+            circle.setFillColor(teamColors[top->GetTeam()]);
             m_texture.draw(circle);
         }
     }

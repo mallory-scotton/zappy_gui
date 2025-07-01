@@ -53,13 +53,23 @@ GameState::GameState()
     , m_livingPlayers(0)
     , m_deadPlayers(0)
     , m_hasChanged(false)
+    , m_shouldStop(false)
 {
     m_totalResources.Reset();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+GameState::~GameState()
+{
+    StopNetworkThread();
+    Disconnect();
+}
+
+///////////////////////////////////////////////////////////////////////////////
 bool GameState::Connect(const std::string& host, int port)
 {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
     m_host = host;
     m_port = port;
 
@@ -83,6 +93,7 @@ bool GameState::Connect(const std::string& host, int port)
         }
 
         m_socket.Send("GRAPHIC\n");
+        StartNetworkThread();
         return (true);
     }
     catch (const std::exception& e)
@@ -94,64 +105,144 @@ bool GameState::Connect(const std::string& host, int port)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void GameState::Update(void)
+void GameState::Disconnect(void)
 {
-    m_hasChanged = false;
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
+    if (m_isConnected)
+    {
+        m_socket.Close();
+        m_isConnected = false;
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void GameState::StartNetworkThread(void)
+{
+    if (m_networkThread.joinable())
+    {
+        StopNetworkThread();
+    }
+
+    m_shouldStop = false;
+    m_networkThread = std::thread(&GameState::NetworkThreadFunction, this);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+void GameState::StopNetworkThread(void)
+{
+    m_shouldStop = true;
+    m_cv.notify_all();
+
+    if (m_networkThread.joinable())
+    {
+        m_networkThread.join();
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void GameState::NetworkThreadFunction(void)
+{
+    while (!m_shouldStop && m_isConnected)
+    {
+        try
+        {
+            ProcessNetworkMessages();
+
+            // Small sleep to prevent excessive CPU usage
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        }
+        catch (const std::exception& e)
+        {
+            std::cerr << "Network thread error: " << e.what() << std::endl;
+            break;
+        }
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void GameState::ProcessNetworkMessages(void)
+{
     if (!m_isConnected)
     {
         return;
     }
 
     std::string msg;
-    while (!(msg = m_socket.RecvLine(MSG_DONTWAIT)).empty())
+    while (!(msg = m_socket.RecvLine(MSG_DONTWAIT)).empty() && !m_shouldStop)
     {
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
         auto it = m_commands.find(msg.substr(0, 3));
         if (it != m_commands.end())
         {
-            it->second(msg.substr(4));
+            try
+            {
+                it->second(msg.substr(4));
+            }
+            catch (...) {}
         }
     }
 
-    if (m_messages.size() >= 200)
     {
-        size_t removed = 0;
-        for (auto it = m_messages.begin(); it != m_messages.end() && removed < 50;)
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
+        if (m_messages.size() >= 200)
         {
-            if (!it->IsImportant())
+            size_t removed = 0;
+            for (auto it = m_messages.begin(); it != m_messages.end() && removed < 50;)
             {
-                it = m_messages.erase(it);
-                ++removed;
-            }
-            else
-            {
-                ++it;
+                if (!it->IsImportant())
+                {
+                    it = m_messages.erase(it);
+                    ++removed;
+                }
+                else
+                {
+                    ++it;
+                }
             }
         }
     }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+void GameState::Lock(void) const
+{
+    m_mutex.lock();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void GameState::Unlock(void) const
+{
+    m_mutex.unlock();
+}
+
+///////////////////////////////////////////////////////////////////////////////
 std::tuple<unsigned int, unsigned int> GameState::GetDimensions(void) const
 {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     return (std::make_tuple(m_width, m_height));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 unsigned int GameState::GetWidth(void) const
 {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     return (m_width);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 unsigned int GameState::GetHeight(void) const
 {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     return (m_height);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 const Inventory& GameState::GetTileAt(unsigned int x, unsigned int y) const
 {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     if (x >= m_width || y >= m_height)
     {
         throw Exception("Invalid tile coordinates");
@@ -162,66 +253,75 @@ const Inventory& GameState::GetTileAt(unsigned int x, unsigned int y) const
 ///////////////////////////////////////////////////////////////////////////////
 const std::vector<Inventory>& GameState::GetTiles(void) const
 {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     return (m_tiles);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 const std::vector<Team>& GameState::GetTeams(void) const
 {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     return (m_teams);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 const std::deque<Message>& GameState::GetMessages(void) const
 {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     return (m_messages);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 const Inventory& GameState::GetTotalResources(void)
 {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
     m_totalResources.Reset();
 
-    for (const auto& tile : m_tiles) {
+    for (const auto& tile : m_tiles)
+    {
         m_totalResources.Add(tile);
     }
 
-    for (const auto& team : m_teams) {
-        for (const auto& player : team.GetPlayers()) {
-            if (player.IsAlive()) {
-                m_totalResources.Add(player.GetInventory());
-            }
-        }
-    }
+    return (m_totalResources);
+}
 
-    return m_totalResources;
+///////////////////////////////////////////////////////////////////////////////
+void GameState::ResetChanged(void)
+{
+    m_hasChanged = false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 unsigned int GameState::GetFrequency(void) const
 {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     return (m_frequency);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 unsigned int GameState::GetLivingPlayers(void) const
 {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     return (m_livingPlayers);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 unsigned int GameState::GetDeadPlayers(void) const
 {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     return (m_deadPlayers);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-std::vector<Player> GameState::GetPlayersAt(
+std::vector<const Player*> GameState::GetPlayersAt(
     unsigned int x,
     unsigned int y
 ) const
 {
-    std::vector<Player> players;
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+    std::vector<const Player*> players;
 
     for (const auto& team : m_teams)
     {
@@ -231,7 +331,7 @@ std::vector<Player> GameState::GetPlayersAt(
 
             if (px == x && py == y && player.IsAlive())
             {
-                players.push_back(player);
+                players.push_back(&player);
             }
         }
     }
@@ -242,7 +342,7 @@ std::vector<Player> GameState::GetPlayersAt(
 ///////////////////////////////////////////////////////////////////////////////
 bool GameState::HasChanged(void) const
 {
-    return (m_hasChanged);
+    return (m_hasChanged.load());
 }
 
 ///////////////////////////////////////////////////////////////////////////////

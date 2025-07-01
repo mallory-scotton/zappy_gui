@@ -34,9 +34,13 @@ void Application::Update(void)
 {
     GameState& gs = GameState::GetInstance();
 
-    gs.Update();
     m_renderer->Update();
     m_renderer->Display();
+
+    if (gs.HasChanged())
+    {
+        gs.ResetChanged();
+    }
 }
 
 } // !namespace Zappy
