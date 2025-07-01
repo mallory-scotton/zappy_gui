@@ -28,8 +28,8 @@ private:
     ///////////////////////////////////////////////////////////////////////////
     sf::RenderWindow& m_window; //<! The window to which the GUI is attached
     sf::Clock m_clock;          //<! Clock to manage frame time
-    int m_currentX;
-    int m_currentY;
+    unsigned int m_currentX;
+    unsigned int m_currentY;
 
     bool m_EggLogs = true;
     bool m_BroadcastLogs = true;

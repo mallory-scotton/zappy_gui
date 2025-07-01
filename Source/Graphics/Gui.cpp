@@ -264,8 +264,22 @@ void Gui::RenderTileInspector(void)
     ImGui::Separator();
     ImGui::Dummy(ImVec2(0.0f, 5.0f));
 
-    //TODO: list players on tile with level and inv
     ImGui::Text("Players on Tile: %d", 0);
+    for (const auto& team : gs.GetTeams())
+    {
+        ImGui::PushStyleColor(ImGuiCol_Text, ConvertColor(team.GetColor()));
+
+        for (const auto& player : team.GetPlayers())
+        {
+            if (player.GetX() == m_currentX && player.GetY() == m_currentY)
+            {
+                ImGui::Text("%s (ID: %d, Level: %d)", player.GetName().c_str(),
+                            player.GetID(), player.GetLevel());
+            }
+        }
+
+        ImGui::PopStyleColor();
+    }
 
     ImGui::End();
 }
