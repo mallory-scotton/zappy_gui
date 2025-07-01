@@ -6,9 +6,11 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Dependencies
 ///////////////////////////////////////////////////////////////////////////////
+#include "Game/Inventory.hpp"
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
+#include <vector>
 
 ///////////////////////////////////////////////////////////////////////////////
 // Namespace Zappy
@@ -45,6 +47,18 @@ private:
     float m_viewportX;              //< The X position of the viewport
     float m_viewportY;              //< The Y position of the viewport
     bool m_forceRender;             //< Flag to force rendering
+    sf::Font m_font;                //< The font used for rendering text
+    bool m_fontLoaded = false;      //< Flag to check if the font is loaded
+    sf::Text m_text;                //< The text object for rendering resources
+
+public:
+    struct ResourceDisplay {
+        unsigned int value;
+        sf::Color color;
+        char symbol;
+    };
+
+    std::vector<ResourceDisplay> m_resources;
 
 public:
     ///////////////////////////////////////////////////////////////////////////
@@ -124,6 +138,16 @@ private:
     ///
     ///////////////////////////////////////////////////////////////////////////
     void RenderPlayers(void);
+
+    ///////////////////////////////////////////////////////////////////////////
+    /// \brief Get the resources at a specific inventory
+    ///
+    /// \param inv The inventory to check for resources
+    ///
+    /// \return A vector of ResourceDisplay objects representing the resources
+    ///
+    ///////////////////////////////////////////////////////////////////////////
+    std::vector<ResourceDisplay>& GetResources(const Inventory& inv);
 };
 
 } // !namespace Zappy
