@@ -52,6 +52,10 @@ bool Viewport::Resize(unsigned int width, unsigned int height)
         height = DEFAULT_HEIGHT;
     }
 
+    m_view.setCenter(
+        static_cast<float>(width) / 2.f,
+        static_cast<float>(height) / 2.f
+    );
     m_view.setSize(
         static_cast<float>(width),
         static_cast<float>(height)
@@ -82,6 +86,9 @@ void Viewport::RenderGrid(void)
     float tileHeight = static_cast<float>(size.y) / height;
     m_tileSize = std::min(tileWidth, tileHeight);
 
+    float offsetX = (size.x - (width * m_tileSize)) / 2.f;
+    float offsetY = (size.y - (height * m_tileSize)) / 2.f;
+
     sf::RectangleShape tile(sf::Vector2f(m_tileSize - 1.f, m_tileSize - 1.f));
 
     tile.setFillColor(sf::Color::Transparent);
@@ -92,8 +99,8 @@ void Viewport::RenderGrid(void)
     {
         for (unsigned int x = 0; x < width; ++x)
         {
-            float posX = static_cast<float>(x) * m_tileSize;
-            float posY = static_cast<float>(y) * m_tileSize;
+            float posX = static_cast<float>(x) * m_tileSize + offsetX;
+            float posY = static_cast<float>(y) * m_tileSize + offsetY;
 
             tile.setPosition(posX, posY);
             m_texture.draw(tile);
