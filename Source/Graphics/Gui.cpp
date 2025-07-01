@@ -284,6 +284,8 @@ void Gui::RenderCurrentGame(void)
                         {
                             ImGui::Text("%s (ID: %d)", player.GetName().c_str(),
                                         player.GetID());
+                            ImGui::SameLine();
+                            player.GetInventory().DrawInvNumb();
                         }
                     }
                     ImGui::TreePop();

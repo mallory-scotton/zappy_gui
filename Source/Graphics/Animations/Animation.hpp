@@ -28,6 +28,7 @@ protected:
     unsigned int m_y;           //< The Y position of the animation
     float m_maxDist;            //< The maximum distance the animation can travel
     float m_duration;           //< The duration of the animation in seconds
+    float m_currentTime;        //< The current time of the animation
     bool m_isFinished;          //< Flag to indicate if the animation is finished
     sf::CircleShape m_circle;   //< The circle shape used for the animation
     sf::RectangleShape m_rectangle; //< The rectangle shape used for the animation
@@ -105,6 +106,22 @@ public:
     ///
     ///////////////////////////////////////////////////////////////////////////
     bool IsFinished(void) const;
+
+    ///////////////////////////////////////////////////////////////////////////
+    /// \brief
+    ///
+    /// \return
+    ///
+    ///////////////////////////////////////////////////////////////////////////
+    unsigned int GetX(void) const;
+
+    ///////////////////////////////////////////////////////////////////////////
+    /// \brief
+    ///
+    /// \return
+    ///
+    ///////////////////////////////////////////////////////////////////////////
+    unsigned int GetY(void) const;
 };
 
 } // !namespace Zappy

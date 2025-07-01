@@ -214,6 +214,7 @@ void Viewport::Render(void)
     if (gs.HasWin())
     {
         RenderWinner(gs.GetWinner());
+        m_activeAnimations.clear();
     }
 
     m_texture.display();
@@ -385,7 +386,7 @@ void Viewport::RenderWinner(const Team& team)
         // Create winner text
         m_text.setString("WINNER: " + team.GetName());
         m_text.setCharacterSize(42);
-        m_text.setFillColor(team.GetColor());
+        m_text.setFillColor((team.GetColor()));
         m_text.setStyle(sf::Text::Bold);
 
         // Center the text
@@ -402,7 +403,10 @@ void Viewport::ProcessAnimationEvents(void)
 
     for (const auto& event : events)
     {
-        Animation animation(event.x, event.y, 200.0f, event.duration);
+        Animation animation(
+            event.x * TILE_SIZE + (TILE_SIZE/2),
+            event.y * TILE_SIZE + (TILE_SIZE/2),
+            100.0f, event.duration);
 
         switch (event.type)
         {
@@ -442,7 +446,8 @@ void Viewport::UpdateAndRenderAnimations(void)
     auto it = m_activeAnimations.begin();
     while (it != m_activeAnimations.end())
     {
-        it->Update(0.01f);
+        float deltaTime = ImGui::GetIO().DeltaTime;
+        it->Update(deltaTime);
 
         if (it->IsFinished())
         {

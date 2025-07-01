@@ -16,11 +16,11 @@ Animation::Animation(unsigned int x, unsigned int y, float maxDist, float durati
     m_circle.setRadius(0.f);
     m_circle.setOrigin(0.f, 0.f);
     m_circle.setFillColor(sf::Color::Transparent);
-    m_circle.setOutlineThickness(2.f);
+    m_circle.setOutlineThickness(1.f);
     m_rectangle.setSize(sf::Vector2f(0.f, 0.f));
     m_rectangle.setOrigin(0.f, 0.f);
     m_rectangle.setFillColor(sf::Color::Transparent);
-    m_rectangle.setOutlineThickness(2.f);
+    m_rectangle.setOutlineThickness(1.f);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -47,26 +47,35 @@ void Animation::Update(float deltaTime)
     if (m_isFinished)
         return;
 
-    m_duration -= deltaTime;
-    if (m_duration <= 0.f)
+    m_currentTime += deltaTime;
+    if (m_currentTime >= m_duration)
     {
         m_isFinished = true;
         return;
     }
 
-    float progress = 1.f - (m_duration / m_maxDist);
+    float progress = m_currentTime / m_duration;
     float size = m_maxDist * progress;
 
+    sf::Color outLineColor;
+    int alpha = static_cast<int>(255 * (1.0f - progress));
     if (m_isCircle)
     {
         m_circle.setRadius(size);
         m_circle.setOrigin(size, size);
+        outLineColor = m_circle.getOutlineColor();
+        outLineColor.a = alpha;
+        m_circle.setOutlineColor(outLineColor);
     }
     else if (m_isRectangle)
     {
         m_rectangle.setSize(sf::Vector2f(size, size));
         m_rectangle.setOrigin(size / 2.f, size / 2.f);
+        outLineColor = m_rectangle.getOutlineColor();
+        outLineColor.a = alpha;
+        m_rectangle.setOutlineColor(outLineColor);
     }
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -100,9 +109,6 @@ void Animation::SetColor(const sf::Color& color)
 ///////////////////////////////////////////////////////////////////////////////
 void Animation::SetPosition(unsigned int x, unsigned int y)
 {
-    m_x = x;
-    m_y = y;
-
     if (m_isCircle)
     {
         m_circle.setPosition(x, y);
@@ -117,6 +123,18 @@ void Animation::SetPosition(unsigned int x, unsigned int y)
 bool Animation::IsFinished(void) const
 {
     return m_isFinished;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+unsigned int Animation::GetX(void) const
+{
+    return m_x;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+unsigned int Animation::GetY(void) const
+{
+    return m_y;
 }
 
 } // !namespace Zappy
