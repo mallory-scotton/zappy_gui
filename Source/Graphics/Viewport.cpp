@@ -229,6 +229,7 @@ void Viewport::Render(void)
     GameState& gs = GameState::GetInstance();
 
     m_forceRender = false;
+    m_texture.setView(m_view);
 
     m_texture.clear(sf::Color(20, 20, 20));
     RenderGrid();
@@ -401,11 +402,11 @@ void Viewport::RenderWinner(const Team& team)
     float gridCenterX = static_cast<float>(mapWidth * TILE_SIZE) / 2.0f;
     float gridCenterY = static_cast<float>(mapHeight * TILE_SIZE) / 2.0f;
 
-    sf::View originalView = m_texture.getView();
+    // sf::View originalView = m_texture.getView();
 
-    sf::View winnerView = m_view;
-    winnerView.setCenter(gridCenterX, gridCenterY);
-    m_texture.setView(winnerView);
+    // sf::View winnerView = m_view;
+    // winnerView.setCenter(gridCenterX, gridCenterY);
+    // m_texture.setView(winnerView);
 
     sf::RectangleShape background;
     background.setSize(sf::Vector2f(size.x * 0.7f, size.y * 0.3f));
@@ -416,17 +417,19 @@ void Viewport::RenderWinner(const Team& team)
     background.setOutlineColor(team.GetColor());
     m_texture.draw(background);
 
+    sf::Text text;
     if (m_fontLoaded) {
-        m_text.setString("WINNER: " + team.GetName());
-        m_text.setCharacterSize(42);
-        m_text.setFillColor((team.GetColor()));
+        text.setFont(m_font);
+        text.setString("WINNER: " + team.GetName());
+        text.setCharacterSize(42);
+        text.setFillColor((team.GetColor()));
         m_text.setStyle(sf::Text::Bold);
-        m_text.setPosition(gridCenterX, gridCenterY);
-        sf::FloatRect textBounds = m_text.getLocalBounds();
-        m_text.setOrigin(textBounds.width / 2.0f, textBounds.height / 2.0f);
-        m_texture.draw(m_text);
+        text.setPosition(gridCenterX, gridCenterY);
+        sf::FloatRect textBounds = text.getLocalBounds();
+        text.setOrigin(textBounds.width / 2.0f, textBounds.height / 2.0f);
+        m_texture.draw(text);
     }
-    m_texture.setView(originalView);
+    // m_texture.setView(originalView);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
