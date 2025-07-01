@@ -101,6 +101,9 @@ void Gui::RenderLogs(void)
 
     ImGui::Separator();
 
+    static float rainbowTime = 0.0f;
+    rainbowTime += ImGui::GetIO().DeltaTime;
+
     for (auto it = logs.rbegin(); it != logs.rend(); ++it)
     {
         const auto& log = *it;
@@ -130,7 +133,27 @@ void Gui::RenderLogs(void)
 
         if (showLog)
         {
-            ImGui::Text("%s", log.GetContent().c_str());
+            if (type == "Victory") {
+                ImVec4 origColor = ImGui::GetStyle().Colors[ImGuiCol_Text];
+
+                const std::string& content = log.GetContent();
+                for (size_t i = 0; i < content.size(); i++) {
+                    float hue = rainbowTime * 2.0f + i * 0.02f;
+                    ImVec4 color = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
+                    ImGui::ColorConvertHSVtoRGB(fmodf(hue, 1.0f), 0.8f, 1.0f,
+                                                color.x, color.y, color.z);
+                    ImGui::PushStyleColor(ImGuiCol_Text, color);
+                    ImGui::Text("%c", content[i]);
+                    ImGui::PopStyleColor();
+                    ImGui::SameLine(0.0f, 0.0f);
+                }
+                ImGui::NewLine();
+
+                ImGui::PushStyleColor(ImGuiCol_Text, origColor);
+                ImGui::PopStyleColor();
+            } else {
+                ImGui::Text("%s", log.GetContent().c_str());
+            }
         }
     }
 
@@ -178,28 +201,32 @@ void Gui::RenderCurrentGame(void)
     ImGui::Text("Players per Team:");
     for (const auto& team : teams)
     {
-        if (ImGui::TreeNode(team.GetName().c_str()))
+        const auto& players = team.GetPlayers();
+
+        std::array<int, 9> levelCount = {};
+
+        for (const auto& player : players)
         {
-            const auto& players = team.GetPlayers();
-            ImGui::Text("Players: %d", team.GetLivingPlayers());
-            std::vector<Player> sortedPlayers = players;
+            levelCount[player.GetLevel()]++;
+        }
 
-            std::sort(sortedPlayers.begin(), sortedPlayers.end(),
-                [](const Player& a, const Player& b) {
-                    return a.GetLevel() > b.GetLevel();
-                });
+        int maxLevel = 1;
+        for (int i = 8; i >= 1; i--) {
+            if (levelCount[i] > 0) {
+                maxLevel = i;
+                break;
+            }
+        }
 
-            for (const auto& player : sortedPlayers)
+        std::string name = team.GetName() + " Level " + std::to_string(maxLevel);
+        if (ImGui::TreeNode(name.c_str()))
+        {
+            ImGui::Text("Players: %d | Max Level: %d", team.GetLivingPlayers(), maxLevel);
+
+            for (int level = 8; level > 0; level--)
             {
-                ImGui::Text("Player ID: %d, Level: %d", player.GetID(), player.GetLevel());
-                ImGui::Text("Inv: %d, %d, %d, %d, %d, %d, %d",
-                            player.GetInventory().food,
-                            player.GetInventory().linemate,
-                            player.GetInventory().deraumere,
-                            player.GetInventory().sibur,
-                            player.GetInventory().mendiane,
-                            player.GetInventory().phiras,
-                            player.GetInventory().thystame);
+                ImGui::Separator();
+                ImGui::Text("Level %d: %d players", level, levelCount[level]);
             }
             ImGui::TreePop();
         }
