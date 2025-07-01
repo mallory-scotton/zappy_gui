@@ -52,6 +52,7 @@ GameState::GameState()
     , m_frequency(0)
     , m_livingPlayers(0)
     , m_deadPlayers(0)
+    , m_hasChanged(false)
 {
     m_totalResources.Reset();
 }
@@ -95,6 +96,8 @@ bool GameState::Connect(const std::string& host, int port)
 ///////////////////////////////////////////////////////////////////////////////
 void GameState::Update(void)
 {
+    m_hasChanged = false;
+
     if (!m_isConnected)
     {
         return;
@@ -107,6 +110,23 @@ void GameState::Update(void)
         if (it != m_commands.end())
         {
             it->second(msg.substr(4));
+        }
+    }
+
+    if (m_messages.size() >= 200)
+    {
+        size_t removed = 0;
+        for (auto it = m_messages.begin(); it != m_messages.end() && removed < 50;)
+        {
+            if (!it->IsImportant())
+            {
+                it = m_messages.erase(it);
+                ++removed;
+            }
+            else
+            {
+                ++it;
+            }
         }
     }
 }
@@ -151,11 +171,13 @@ const std::vector<Team>& GameState::GetTeams(void) const
     return (m_teams);
 }
 
-const std::vector<Message>& GameState::GetMessages(void) const
+///////////////////////////////////////////////////////////////////////////////
+const std::deque<Message>& GameState::GetMessages(void) const
 {
     return (m_messages);
 }
 
+///////////////////////////////////////////////////////////////////////////////
 const Inventory& GameState::GetTotalResources(void)
 {
     m_totalResources.Reset();
@@ -194,12 +216,43 @@ unsigned int GameState::GetDeadPlayers(void) const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+std::vector<Player> GameState::GetPlayersAt(
+    unsigned int x,
+    unsigned int y
+) const
+{
+    std::vector<Player> players;
+
+    for (const auto& team : m_teams)
+    {
+        for (const auto& player : team.GetPlayers())
+        {
+            auto [px, py] = player.GetPosition();
+
+            if (px == x && py == y && player.IsAlive())
+            {
+                players.push_back(player);
+            }
+        }
+    }
+
+    return (players);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool GameState::HasChanged(void) const
+{
+    return (m_hasChanged);
+}
+
+///////////////////////////////////////////////////////////////////////////////
 void GameState::ParseMSZ(const std::string& msg)
 {
     std::istringstream iss(msg);
 
     iss >> m_width >> m_height;
     m_tiles.resize(m_width * m_height);
+    m_hasChanged = true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -218,6 +271,7 @@ void GameState::ParseBCT(const std::string& msg)
     unsigned int index = y * m_width + x;
 
     m_tiles[index].ParseContent(iss);
+    m_hasChanged = true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -233,6 +287,7 @@ void GameState::ParseTNA(const std::string& msg)
         sf::Color color = m_teamColors[m_teams.size() % m_teamColors.size()];
         Team team(name, color);
         m_teams.push_back(team);
+        m_hasChanged = true;
     }
 }
 
@@ -249,6 +304,7 @@ void GameState::ParsePNW(const std::string& msg)
         {
             team.AddPlayer(player);
             m_livingPlayers++;
+            m_hasChanged = true;
             break;
         }
     }
@@ -259,7 +315,10 @@ void GameState::ParsePPO(const std::string& msg)
 {
     std::istringstream iss(msg);
 
-    try { GetPlayerByID(iss).UpdatePosition(iss); }
+    try {
+        GetPlayerByID(iss).UpdatePosition(iss);
+        m_hasChanged = true;
+    }
     catch (...) {}
 }
 
@@ -294,7 +353,7 @@ void GameState::ParsePEX(const std::string& msg)
             player.GetName() + " has left the game.",
             "Event",
             "Server",
-            true
+            false
         );
 
         for (auto& team : m_teams)
@@ -304,6 +363,7 @@ void GameState::ParsePEX(const std::string& msg)
                 team.RemovePlayer(player);
                 m_livingPlayers--;
                 m_deadPlayers++;
+                m_hasChanged = true;
                 break;
             }
         }
@@ -330,6 +390,7 @@ void GameState::ParsePBC(const std::string& msg)
             player.GetName(),
             false
         );
+        m_hasChanged = true;
     }
     catch (...) {}
 }
@@ -361,6 +422,7 @@ void GameState::ParsePIC(const std::string& msg)
         "Server",
         true
     );
+    m_hasChanged = true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -379,6 +441,7 @@ void GameState::ParsePIE(const std::string& msg)
         "Server",
         true
     );
+    m_hasChanged = true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -393,7 +456,7 @@ void GameState::ParsePFK(const std::string& msg)
             player.GetName() + " is laying an egg",
             "Egg",
             player.GetName(),
-            true
+            false
         );
     }
     catch (...) {}
@@ -422,7 +485,7 @@ void GameState::ParsePDR(const std::string& msg)
             player.GetName() + " has dropped a resource: " + resources[index],
             "Resource",
             player.GetName(),
-            true
+            false
         );
     }
     catch (...) {}
@@ -451,7 +514,7 @@ void GameState::ParsePGT(const std::string& msg)
             player.GetName() + " has taken a resource: " + resources[index],
             "Resource",
             player.GetName(),
-            true
+            false
         );
     }
     catch (...) {}
@@ -472,7 +535,7 @@ void GameState::ParsePDI(const std::string& msg)
             player.GetName() + " died",
             "Death",
             "Server",
-            true
+            false
         );
 
         for (auto& team : m_teams)
@@ -482,6 +545,7 @@ void GameState::ParsePDI(const std::string& msg)
                 team.RemovePlayer(player);
                 m_livingPlayers--;
                 m_deadPlayers++;
+                m_hasChanged = true;
                 break;
             }
         }
@@ -511,7 +575,7 @@ void GameState::ParseENW(const std::string& msg)
             std::to_string(x) + ", " + std::to_string(y) + ")",
             "Egg",
             player.GetName(),
-            true
+            false
         );
     }
     catch (...) {}
@@ -531,7 +595,7 @@ void GameState::ParseEBO(const std::string& msg)
         "Egg " + std::to_string(id) + " has been hatched",
         "Egg",
         "Server",
-        true
+        false
     );
 }
 
@@ -549,7 +613,7 @@ void GameState::ParseEDI(const std::string& msg)
         "Egg " + std::to_string(id) + " has been destroyed",
         "Egg",
         "Server",
-        true
+        false
     );
 }
 
@@ -583,6 +647,7 @@ void GameState::ParseSEG(const std::string& msg)
         "Server",
         true
     );
+    m_hasChanged = true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -615,7 +680,7 @@ void GameState::ParseSUC(const std::string& msg)
         "Unknown command: " + command,
         "Error",
         "Server",
-        true
+        false
     );
 }
 

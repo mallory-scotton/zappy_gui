@@ -21,6 +21,7 @@ Viewport::Viewport(void)
     , m_lastMousePos(0.f, 0.f)
     , m_viewportX(0.f)
     , m_viewportY(0.f)
+    , m_forceRender(false)
 {
     Resize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 }
@@ -29,16 +30,6 @@ Viewport::Viewport(void)
 unsigned int Viewport::GetTextureID(void) const
 {
     return (m_texture.getTexture().getNativeHandle());
-}
-
-///////////////////////////////////////////////////////////////////////////////
-void Viewport::Render(void)
-{
-    m_texture.clear(sf::Color(20, 20, 20));
-
-    RenderGrid();
-
-    m_texture.display();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -83,7 +74,7 @@ bool Viewport::Resize(unsigned int width, unsigned int height)
     m_texture.setView(m_view);
     m_zoom = DEFAULT_ZOOM;
 
-    Render();
+    m_forceRender = true;
 
     return (true);
 }
@@ -121,6 +112,7 @@ void Viewport::ProcessEvent(const sf::Event& event)
         }
 
         m_texture.setView(m_view);
+        m_forceRender = true;
     }
     else if (event.type == sf::Event::MouseButtonPressed)
     {
@@ -169,6 +161,7 @@ void Viewport::ProcessEvent(const sf::Event& event)
             m_texture.setView(m_view);
 
             m_lastMousePos = newMousePos;
+            m_forceRender = true;
         }
     }
 }
@@ -192,6 +185,27 @@ void Viewport::SetViewportPosition(float x, float y)
 {
     m_viewportX = x;
     m_viewportY = y;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void Viewport::Render(void)
+{
+    GameState& gs = GameState::GetInstance();
+
+    if (!gs.HasChanged() && !m_forceRender)
+    {
+        m_texture.display();
+        return;
+    }
+
+    m_forceRender = false;
+
+    m_texture.clear(sf::Color(20, 20, 20));
+
+    RenderGrid();
+    RenderPlayers();
+
+    m_texture.display();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -219,6 +233,82 @@ void Viewport::RenderGrid(void)
 
             tile.setPosition(posX, posY);
             m_texture.draw(tile);
+        }
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void Viewport::RenderPlayers(void)
+{
+    GameState& gs = GameState::GetInstance();
+    auto [width, height] = gs.GetDimensions();
+    auto teams = gs.GetTeams();
+    std::map<std::string, sf::Color> teamColors;
+
+    for (const auto& team : teams)
+    {
+        teamColors[team.GetName()] = team.GetColor();
+    }
+
+    static constexpr float CIRCLE_RADIUS = TILE_SIZE / 4.f;
+
+    sf::CircleShape circle = sf::CircleShape(CIRCLE_RADIUS);
+    sf::ConvexShape triangle(3);
+
+    circle.setOrigin(CIRCLE_RADIUS, CIRCLE_RADIUS);
+    circle.setOutlineThickness(0.f);
+
+    triangle.setPoint(0, sf::Vector2f(0.f, -CIRCLE_RADIUS));
+    triangle.setPoint(1, sf::Vector2f(-CIRCLE_RADIUS, CIRCLE_RADIUS));
+    triangle.setPoint(2, sf::Vector2f(CIRCLE_RADIUS, CIRCLE_RADIUS));
+    triangle.setOrigin(0.f, CIRCLE_RADIUS);
+
+    float offset = TILE_SIZE / 2.f - 1.5f;
+
+    std::vector<unsigned int> dirs;
+
+    for (unsigned int y = 0; y < height; ++y)
+    {
+        for (unsigned int x = 0; x < width; ++x)
+        {
+            float posX = static_cast<float>(x) * TILE_SIZE + offset;
+            float posY = static_cast<float>(y) * TILE_SIZE + offset;
+
+            auto players = gs.GetPlayersAt(x, y);
+
+            if (players.size() == 0)
+            {
+                continue;
+            }
+
+            dirs.clear();
+
+            for (const auto& player : players)
+            {
+                if (dirs.size() == 4)
+                {
+                    break;
+                }
+
+                unsigned int orientation = player.GetOrientation();
+
+                auto it = std::find(dirs.begin(), dirs.end(), orientation);
+                if (it == dirs.end())
+                {
+                    triangle.setFillColor(teamColors[player.GetTeam()]);
+                    triangle.setPosition(posX, posY);
+                    triangle.setRotation(
+                        90.f * static_cast<float>(orientation)
+                    );
+                    m_texture.draw(triangle);
+                    dirs.push_back(orientation);
+                }
+            }
+
+            Player top = players.back();
+            circle.setPosition(posX, posY);
+            circle.setFillColor(teamColors[top.GetTeam()]);
+            m_texture.draw(circle);
         }
     }
 }

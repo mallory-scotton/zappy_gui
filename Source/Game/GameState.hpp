@@ -16,6 +16,7 @@
 #include <string>
 #include <functional>
 #include <sstream>
+#include <deque>
 #include <tuple>
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -52,11 +53,12 @@ private:
     > m_commands;                       //<! Commands for the game state
     unsigned int m_width;               //<! Width of the game map
     unsigned int m_height;              //<! Height of the game map
-    std::vector<Message> m_messages;    //<! Messages in the game state
+    std::deque<Message> m_messages;     //<! Messages in the game state
     unsigned int m_frequency;           //<! Frequency of the game updates
     unsigned int m_livingPlayers;       //<! Number of living players
     unsigned int m_deadPlayers;         //<! Number of dead players
     Inventory m_totalResources;         //<! Total resources in the game state
+    bool m_hasChanged;                  //<! Indicate if the game state has changed
 
 private:
     ///////////////////////////////////////////////////////////////////////////
@@ -157,8 +159,7 @@ public:
     /// \return A vector containing all Message objects
     ///
     ///////////////////////////////////////////////////////////////////////////
-    const std::vector<Message>& GetMessages(void) const;
-
+    const std::deque<Message>& GetMessages(void) const;
 
     ///////////////////////////////////////////////////////////////////////////
     /// \brief Get the total resources in the game state
@@ -191,6 +192,25 @@ public:
     ///
     ///////////////////////////////////////////////////////////////////////////
     unsigned int GetDeadPlayers(void) const;
+
+    ///////////////////////////////////////////////////////////////////////////
+    /// \brief Get the player by ID
+    ///
+    /// \param x The x-coordinate of the tile
+    /// \param y The y-coordinate of the tile
+    ///
+    /// \return A vector of references to Player objects at the specified tile
+    ///
+    ///////////////////////////////////////////////////////////////////////////
+    std::vector<Player> GetPlayersAt(unsigned int x, unsigned int y) const;
+
+    ///////////////////////////////////////////////////////////////////////////
+    /// \brief Check if the game state has changed
+    ///
+    /// \return True if the game state has changed, false otherwise
+    ///
+    ///////////////////////////////////////////////////////////////////////////
+    bool HasChanged(void) const;
 
 private:
     ///////////////////////////////////////////////////////////////////////////

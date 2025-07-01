@@ -24,21 +24,33 @@ Message::Message(
 {}
 
 ///////////////////////////////////////////////////////////////////////////////
-const std::string& Message::GetContent() const
+const std::string& Message::GetContent(void) const
 {
     return m_content;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-const std::string& Message::GetType() const
+const std::string& Message::GetType(void) const
 {
     return m_type;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-const std::string& Message::GetSource() const
+const std::string& Message::GetSource(void) const
 {
     return m_source;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool Message::IsImportant(void) const
+{
+    return (m_isImportant);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+Message::TimePoint Message::GetTimestamp(void) const
+{
+    return (m_timestamp);
 }
 
 } // !namespace Zappy

@@ -44,10 +44,11 @@ private:
     sf::Vector2f m_lastMousePos;    //< The last mouse position when dragging
     float m_viewportX;              //< The X position of the viewport
     float m_viewportY;              //< The Y position of the viewport
+    bool m_forceRender;             //< Flag to force rendering
 
 public:
     ///////////////////////////////////////////////////////////////////////////
-    /// \brief
+    /// \brief Constructor for the Viewport class
     ///
     ///////////////////////////////////////////////////////////////////////////
     Viewport(void);
@@ -117,6 +118,12 @@ private:
     ///
     ///////////////////////////////////////////////////////////////////////////
     void RenderGrid(void);
+
+    ///////////////////////////////////////////////////////////////////////////
+    /// \brief Render the players on the viewport
+    ///
+    ///////////////////////////////////////////////////////////////////////////
+    void RenderPlayers(void);
 };
 
 } // !namespace Zappy
