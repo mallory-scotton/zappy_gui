@@ -98,17 +98,14 @@ void GameState::Update(void)
         return;
     }
 
-    std::string msg = m_socket.RecvLine(MSG_DONTWAIT);
-
-    if (msg.empty())
+    std::string msg;
+    while (!(msg = m_socket.RecvLine(MSG_DONTWAIT)).empty())
     {
-        return;
-    }
-
-    auto it = m_commands.find(msg.substr(0, 3));
-    if (it != m_commands.end())
-    {
-        it->second(msg.substr(4));
+        auto it = m_commands.find(msg.substr(0, 3));
+        if (it != m_commands.end())
+        {
+            it->second(msg.substr(4));
+        }
     }
 }
 
