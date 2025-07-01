@@ -110,7 +110,7 @@ void GameState::Update(void)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-std::tuple<int, int> GameState::GetDimensions(void) const
+std::tuple<unsigned int, unsigned int> GameState::GetDimensions(void) const
 {
     return (std::make_tuple(m_width, m_height));
 }
