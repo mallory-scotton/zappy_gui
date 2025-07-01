@@ -15,8 +15,12 @@ Animation::Animation(unsigned int x, unsigned int y, float maxDist, float durati
 {
     m_circle.setRadius(0.f);
     m_circle.setOrigin(0.f, 0.f);
+    m_circle.setFillColor(sf::Color::Transparent);
+    m_circle.setOutlineThickness(2.f);
     m_rectangle.setSize(sf::Vector2f(0.f, 0.f));
     m_rectangle.setOrigin(0.f, 0.f);
+    m_rectangle.setFillColor(sf::Color::Transparent);
+    m_rectangle.setOutlineThickness(2.f);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -85,11 +89,11 @@ void Animation::SetColor(const sf::Color& color)
 {
     if (m_isCircle)
     {
-        m_circle.setFillColor(color);
+        m_circle.setOutlineColor(color);
     }
     else if (m_isRectangle)
     {
-        m_rectangle.setFillColor(color);
+        m_rectangle.setOutlineColor(color);
     }
 }
 
