@@ -200,10 +200,14 @@ void Viewport::RenderGrid(void)
     GameState& gs = GameState::GetInstance();
     auto [width, height] = gs.GetDimensions();
 
-    sf::RectangleShape tile(sf::Vector2f(TILE_SIZE - 2.f, TILE_SIZE - 2.f));
+    static constexpr float OUTLINE_THICKNESS = 3.f;
+
+    sf::RectangleShape tile(sf::Vector2f(
+        TILE_SIZE - OUTLINE_THICKNESS, TILE_SIZE - OUTLINE_THICKNESS
+    ));
 
     tile.setFillColor(sf::Color::Transparent);
-    tile.setOutlineThickness(2.f);
+    tile.setOutlineThickness(OUTLINE_THICKNESS);
     tile.setOutlineColor(sf::Color(80, 80, 80));
 
     for (unsigned int y = 0; y < height; ++y)
