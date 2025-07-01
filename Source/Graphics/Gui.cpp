@@ -19,6 +19,7 @@ Gui::Gui(sf::RenderWindow& window)
     : m_window(window)
     , m_currentX(0)
     , m_currentY(0)
+    , m_debug(false)
 {
     if (!ImGui::SFML::Init(m_window))
     {
@@ -40,6 +41,14 @@ Gui::~Gui()
 void Gui::ProcessEvent(const sf::Event& event)
 {
     ImGui::SFML::ProcessEvent(m_window, event);
+
+    if (event.type == sf::Event::KeyReleased)
+    {
+        if (event.key.code == sf::Keyboard::F1)
+        {
+            m_debug = !m_debug;
+        }
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -57,6 +66,22 @@ void Gui::Render(Viewport& viewport)
     RenderCurrentGame();
     RenderTileInspector();
     RenderViewport(viewport);
+
+    if (m_debug)
+    {
+        ImGui::Begin(
+            "App Stats", nullptr,
+            ImGuiWindowFlags_NoCollapse |
+            ImGuiWindowFlags_NoDocking |
+            ImGuiWindowFlags_NoResize |
+            ImGuiWindowFlags_NoTitleBar |
+            ImGuiWindowFlags_AlwaysAutoResize |
+            ImGuiWindowFlags_NoSavedSettings
+        );
+        ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
+        ImGui::Text("Frame Time: %.3f ms", ImGui::GetIO().DeltaTime * 1000.0f);
+        ImGui::End();
+    }
 
     ImGui::SFML::Render(m_window);
 }

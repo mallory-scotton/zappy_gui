@@ -31,6 +31,7 @@ private:
     sf::Clock m_clock;          //<! Clock to manage frame time
     unsigned int m_currentX;
     unsigned int m_currentY;
+    bool m_debug;
 
     bool m_EggLogs = true;
     bool m_BroadcastLogs = true;
