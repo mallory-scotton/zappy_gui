@@ -49,7 +49,7 @@ void Gui::Update(void)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void Gui::Render(unsigned int viewport)
+void Gui::Render(Viewport& viewport)
 {
     PrepareDocking();
 
@@ -62,7 +62,7 @@ void Gui::Render(unsigned int viewport)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void Gui::RenderViewport(unsigned int viewport)
+void Gui::RenderViewport(Viewport& viewport)
 {
     ImGui::Begin("Viewport");
     ImGui::Text("Rendering viewport: %d", viewport);
