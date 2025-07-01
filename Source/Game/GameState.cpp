@@ -209,9 +209,12 @@ void GameState::ParseTNA(const std::string& msg)
 
     if (!name.empty())
     {
-        Team team(name);
+        sf::Color color = m_teamColors[m_teams.size() % m_teamColors.size()];
+        Team team(name, color);
         m_teams.push_back(team);
     }
+
+    std::cout << "Team added: " << name << std::endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

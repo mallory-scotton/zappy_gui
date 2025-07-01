@@ -57,6 +57,17 @@ private:
     unsigned int m_livingPlayers;       //<! Number of living players
     unsigned int m_deadPlayers;         //<! Number of dead players
 
+    const std::vector<sf::Color> m_teamColors = {
+        sf::Color::Red,
+        sf::Color::Blue,
+        sf::Color::Green,
+        sf::Color::Yellow,
+        sf::Color::Magenta,
+        sf::Color::Cyan,
+        sf::Color(255, 165, 0),   // Orange
+        sf::Color(128, 0, 128)    // Purple
+    };
+
 public:
     ///////////////////////////////////////////////////////////////////////////
     /// \brief
