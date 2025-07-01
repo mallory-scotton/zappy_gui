@@ -30,7 +30,8 @@ private:
     static constexpr unsigned int DEFAULT_HEIGHT = 600;
     static constexpr float DEFAULT_ZOOM = 1.0f;
     static constexpr float MIN_ZOOM = 0.1f;
-    static constexpr float MAX_ZOOM = 5.0f;
+    static constexpr float MAX_ZOOM = 1.0f;
+    static constexpr float TILE_SIZE = 64.0f;
 
 private:
     ///////////////////////////////////////////////////////////////////////////
