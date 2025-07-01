@@ -38,6 +38,7 @@ private:
     ///////////////////////////////////////////////////////////////////////////
     sf::View m_view;                //< The SFML view for the viewport
     sf::RenderTexture m_texture;    //< The texture used for rendering
+    sf::RenderTexture m_grid;       //< The texture for the grid
     float m_zoom;                   //< The zoom level of the viewport
 
 public:
@@ -78,6 +79,13 @@ public:
     ///
     ///////////////////////////////////////////////////////////////////////////
     sf::Vector2u GetSize(void) const;
+
+private:
+    ///////////////////////////////////////////////////////////////////////////
+    /// \brief Render the grid on the viewport
+    ///
+    ///////////////////////////////////////////////////////////////////////////
+    void RenderGrid(void);
 };
 
 } // !namespace Zappy

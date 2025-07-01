@@ -57,7 +57,12 @@ private:
     unsigned int m_livingPlayers;       //<! Number of living players
     unsigned int m_deadPlayers;         //<! Number of dead players
 
-    const std::vector<sf::Color> m_teamColors = {
+private:
+    ///////////////////////////////////////////////////////////////////////////
+    // Team colors for visualization
+    ///////////////////////////////////////////////////////////////////////////
+    const std::vector<sf::Color> m_teamColors =
+    {
         sf::Color::Red,
         sf::Color::Blue,
         sf::Color::Green,
@@ -70,7 +75,7 @@ private:
 
 public:
     ///////////////////////////////////////////////////////////////////////////
-    /// \brief
+    /// \brief Default constructor
     ///
     ///////////////////////////////////////////////////////////////////////////
     GameState(void);
@@ -94,84 +99,85 @@ public:
     void Update(void);
 
     ///////////////////////////////////////////////////////////////////////////
-    /// \brief
+    /// \brief Get the dimensions of the game map
     ///
-    /// \return
+    /// \return A tuple containing the width and height of the game map
     ///
     ///////////////////////////////////////////////////////////////////////////
-    std::tuple<int, int> GetDimensions(void) const;
+    std::tuple<unsigned int, unsigned int> GetDimensions(void) const;
 
     ///////////////////////////////////////////////////////////////////////////
-    /// \brief
+    /// \brief Get the width of the game map
     ///
-    /// \return
+    /// \return The width of the game map
     ///
     ///////////////////////////////////////////////////////////////////////////
     unsigned int GetWidth(void) const;
 
     ///////////////////////////////////////////////////////////////////////////
-    /// \brief
+    /// \brief Get the height of the game map
     ///
-    /// \return
+    /// \return The height of the game map
     ///
     ///////////////////////////////////////////////////////////////////////////
     unsigned int GetHeight(void) const;
 
     ///////////////////////////////////////////////////////////////////////////
-    /// \brief
+    /// \brief Get the tile at the specified coordinates
     ///
-    /// \param x
-    /// \param y
+    /// \param x The x-coordinate of the tile
+    /// \param y The y-coordinate of the tile
     ///
-    /// \return
+    /// \return A reference to the Inventory object at the specified tile
     ///
     ///////////////////////////////////////////////////////////////////////////
     const Inventory& GetTileAt(unsigned int x, unsigned int y) const;
 
     ///////////////////////////////////////////////////////////////////////////
-    /// \brief
+    /// \brief Get all tiles in the game state
     ///
-    /// \return
+    /// \return A vector containing all Inventory objects representing the
+    /// tiles
     ///
     ///////////////////////////////////////////////////////////////////////////
     const std::vector<Inventory>& GetTiles(void) const;
 
     ///////////////////////////////////////////////////////////////////////////
-    /// \brief
+    /// \brief Get all teams in the game state
     ///
-    /// \return
+    /// \return A vector containing all Team objects
     ///
     ///////////////////////////////////////////////////////////////////////////
     const std::vector<Team>& GetTeams(void) const;
 
     ///////////////////////////////////////////////////////////////////////////
-    /// \brief
+    /// \brief Get all messages in the game state
     ///
-    /// \return
+    /// \return A vector containing all Message objects
     ///
     ///////////////////////////////////////////////////////////////////////////
     const std::vector<Message>& GetMessages(void) const;
 
     ///////////////////////////////////////////////////////////////////////////
-    /// \brief
+    /// \brief Get the frequency of the game updates
     ///
-    /// \return
+    /// \return The frequency of the game updates
     ///
     ///////////////////////////////////////////////////////////////////////////
     unsigned int GetFrequency(void) const;
 
     ///////////////////////////////////////////////////////////////////////////
-    /// \brief
+    /// \brief Get the number of living players in the game state
     ///
-    /// \return
+    /// \return The number of living players
     ///
     ///////////////////////////////////////////////////////////////////////////
     unsigned int GetLivingPlayers(void) const;
 
     ///////////////////////////////////////////////////////////////////////////
-    /// \brief
+    /// \brief Get the number of dead players in the game state
     ///
-    /// \return
+    /// \return The number of dead players
     ///
     ///////////////////////////////////////////////////////////////////////////
     unsigned int GetDeadPlayers(void) const;
