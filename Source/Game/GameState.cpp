@@ -360,6 +360,19 @@ const Team& GameState::GetWinner(void) const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+const std::vector<GameState::AnimationEvent>& GameState::GetAnimationEvents(void) const
+{
+    return m_animationEvents;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+void GameState::ClearAnimationEvents(void)
+{
+    m_animationEvents.clear();
+}
+
+///////////////////////////////////////////////////////////////////////////////
 void GameState::ParseMSZ(const std::string& msg)
 {
     std::istringstream iss(msg);
@@ -505,8 +518,25 @@ void GameState::ParsePBC(const std::string& msg)
             false
         );
         m_hasChanged = true;
+
+        for (auto& team : m_teams)
+        {
+            if (team.GetName() == player.GetTeam())
+            {
+                m_animationEvents.emplace_back(
+                    AnimationType::Broadcast,
+                    player.GetX(),
+                    player.GetY(),
+                    2.0f,
+                    team
+                );
+                break;
+            }
+        }
+
     }
     catch (...) {}
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -537,6 +567,8 @@ void GameState::ParsePIC(const std::string& msg)
         true
     );
     m_hasChanged = true;
+
+    m_animationEvents.emplace_back(AnimationType::IncantationStart, x, y, 2.0f);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -556,6 +588,12 @@ void GameState::ParsePIE(const std::string& msg)
         true
     );
     m_hasChanged = true;
+
+    m_animationEvents.emplace_back(
+        result == "1" ? AnimationType::IncantationSuccess : AnimationType::IncantationFail,
+        x, y,
+        2.0f
+    );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

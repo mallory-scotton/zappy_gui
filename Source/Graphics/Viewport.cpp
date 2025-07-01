@@ -198,6 +198,7 @@ void Viewport::Render(void)
 
     if (!gs.HasChanged() && !m_forceRender)
     {
+        UpdateAndRenderAnimations();
         m_texture.display();
         return;
     }
@@ -207,6 +208,9 @@ void Viewport::Render(void)
     m_texture.clear(sf::Color(20, 20, 20));
     RenderGrid();
     RenderPlayers();
+
+    ProcessAnimationEvents();
+    UpdateAndRenderAnimations();
     if (gs.HasWin())
     {
         RenderWinner(gs.GetWinner());
@@ -387,6 +391,68 @@ void Viewport::RenderWinner(const Team& team)
         // Center the text
         sf::FloatRect textBounds = m_text.getLocalBounds();
         m_text.setOrigin(textBounds.width / 2.0f, textBounds.height / 2.0f);
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void Viewport::ProcessAnimationEvents(void)
+{
+    GameState& gs = GameState::GetInstance();
+    const auto& events = gs.GetAnimationEvents();
+
+    for (const auto& event : events)
+    {
+        Animation animation(event.x, event.y, 0.0f, event.duration);
+
+        switch (event.type)
+        {
+            case GameState::AnimationType::Broadcast:
+                animation.SetCircle();
+                animation.SetColor(event.team.GetColor());
+                m_activeAnimations.push_back(animation);
+                break;
+
+            case GameState::AnimationType::IncantationStart:
+                animation.SetRectangle();
+                animation.SetColor(sf::Color::Yellow);
+                m_activeAnimations.push_back(animation);
+                break;
+
+            case GameState::AnimationType::IncantationSuccess:
+                animation.SetRectangle();
+                animation.SetColor(sf::Color::Green);
+                m_activeAnimations.push_back(animation);
+                break;
+
+            case GameState::AnimationType::IncantationFail:
+                animation.SetRectangle();
+                animation.SetColor(sf::Color::Red);
+                m_activeAnimations.push_back(animation);
+                break;
+        }
+    }
+
+    // Clear events after processing
+    gs.ClearAnimationEvents();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void Viewport::UpdateAndRenderAnimations(void)
+{
+    auto it = m_activeAnimations.begin();
+    while (it != m_activeAnimations.end())
+    {
+        it->Update(0.1f);
+
+        if (it->IsFinished())
+        {
+            it = m_activeAnimations.erase(it);
+        }
+        else
+        {
+            it->Render(m_texture);
+            ++it;
+        }
     }
 }
 

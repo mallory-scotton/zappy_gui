@@ -7,6 +7,7 @@
 // Dependencies
 ///////////////////////////////////////////////////////////////////////////////
 #include "Game/Inventory.hpp"
+#include "Graphics/Animations/Animation.hpp"
 #include "Game/Team.hpp"
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -51,6 +52,7 @@ private:
     sf::Font m_font;                //< The font used for rendering text
     bool m_fontLoaded = false;      //< Flag to check if the font is loaded
     sf::Text m_text;                //< The text object for rendering resources
+    std::vector<Animation> m_activeAnimations;
 
 public:
     struct ResourceDisplay {
@@ -155,6 +157,18 @@ private:
     ///
     ///////////////////////////////////////////////////////////////////////////
     void RenderWinner(const Team& team);
+
+    ///////////////////////////////////////////////////////////////////////////
+    /// \brief Process animation events from GameState and create animations
+    ///
+    ///////////////////////////////////////////////////////////////////////////
+    void ProcessAnimationEvents(void);
+
+    ///////////////////////////////////////////////////////////////////////////
+    /// \brief Update and render active animations
+    ///
+    ///////////////////////////////////////////////////////////////////////////
+    void UpdateAndRenderAnimations(void);
 };
 
 } // !namespace Zappy

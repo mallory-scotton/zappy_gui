@@ -9,6 +9,7 @@
 #include "Network/Socket.hpp"
 #include "Game/Inventory.hpp"
 #include "Game/Team.hpp"
+#include "Graphics/Animations/Animation.hpp"
 #include "Utils/Singleton.hpp"
 #include "Game/Message.hpp"
 #include <vector>
@@ -106,6 +107,30 @@ private:
 
     bool m_hasWin;                      //<! Flag to indicate if there is a winner
     Team m_winner;                      //<! The winning team
+
+public:
+    enum class AnimationType {
+        Broadcast,
+        IncantationStart,
+        IncantationSuccess,
+        IncantationFail
+    };
+
+private:
+    struct AnimationEvent {
+    AnimationType type;
+    unsigned int x;
+    unsigned int y;
+    float duration;
+    Team team; // For team-colored animations
+
+    AnimationEvent(AnimationType t, unsigned int posX, unsigned int posY,
+                  float dur = 2.0f, const Team& team = Team("Default", sf::Color::White))
+        : type(t), x(posX), y(posY), duration(dur), team(team) {}
+    };
+
+// Replace std::vector<Animation> with:
+    std::vector<AnimationEvent> m_animationEvents;
 
 private:
     ///////////////////////////////////////////////////////////////////////////
@@ -312,6 +337,11 @@ public:
     ///
     ///////////////////////////////////////////////////////////////////////////
     const Team& GetWinner(void) const;
+
+    const std::vector<AnimationEvent>& GetAnimationEvents(void) const;
+
+    void ClearAnimationEvents(void);
+
 
 private:
     ///////////////////////////////////////////////////////////////////////////

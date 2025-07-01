@@ -34,7 +34,6 @@ protected:
     bool m_isCircle;        //< Flag to indicate if the animation is a circle
     bool m_isRectangle;   //< Flag to indicate if the animation is a rectangle
 
-
 public:
     ///////////////////////////////////////////////////////////////////////////
     /// \brief
