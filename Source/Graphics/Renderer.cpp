@@ -39,6 +39,7 @@ void Renderer::Update(void)
     while (m_window.pollEvent(event))
     {
         m_gui.ProcessEvent(event);
+        m_viewport.ProcessEvent(event);
 
         if (event.type == sf::Event::Closed)
         {

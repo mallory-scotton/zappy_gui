@@ -30,7 +30,7 @@ private:
     static constexpr unsigned int DEFAULT_HEIGHT = 600;
     static constexpr float DEFAULT_ZOOM = 1.0f;
     static constexpr float MIN_ZOOM = 0.1f;
-    static constexpr float MAX_ZOOM = 10.0f;
+    static constexpr float MAX_ZOOM = 5.0f;
 
 private:
     ///////////////////////////////////////////////////////////////////////////
@@ -40,6 +40,10 @@ private:
     sf::RenderTexture m_texture;    //< The texture used for rendering
     float m_zoom;                   //< The zoom level of the viewport
     float m_tileSize;               //< The size of the tiles in the viewport
+    bool m_isDragging;              //< Indicate if the viewport is being dragged
+    sf::Vector2f m_lastMousePos;    //< The last mouse position when dragging
+    float m_viewportX;              //< The X position of the viewport
+    float m_viewportY;              //< The Y position of the viewport
 
 public:
     ///////////////////////////////////////////////////////////////////////////
@@ -82,7 +86,32 @@ public:
     ///////////////////////////////////////////////////////////////////////////
     sf::Vector2u GetSize(void) const;
 
+    ///////////////////////////////////////////////////////////////////////////
+    /// \brief Handle an SFML event
+    ///
+    /// \param event The SFML event to handle
+    ///
+    ///////////////////////////////////////////////////////////////////////////
+    void ProcessEvent(const sf::Event& event);
+
+    ///////////////////////////////////////////////////////////////////////////
+    /// \brief Set the viewport position
+    ///
+    /// \param x The X position of the viewport
+    /// \param y The Y position of the viewport
+    ///
+    ///////////////////////////////////////////////////////////////////////////
+    void SetViewportPosition(float x, float y);
+
 private:
+    ///////////////////////////////////////////////////////////////////////////
+    /// \brief Zoom the viewport
+    ///
+    /// \param factor The zoom factor to apply
+    ///
+    ///////////////////////////////////////////////////////////////////////////
+    void Zoom(float factor);
+
     ///////////////////////////////////////////////////////////////////////////
     /// \brief Render the grid on the viewport
     ///
