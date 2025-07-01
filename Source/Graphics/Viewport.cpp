@@ -17,7 +17,6 @@ Viewport::Viewport(void)
     : m_view(sf::FloatRect(0.f, 0.f, DEFAULT_WIDTH, DEFAULT_HEIGHT))
     , m_texture()
     , m_zoom(DEFAULT_ZOOM)
-    , m_tileSize(0.f)
     , m_isDragging(false)
     , m_lastMousePos(0.f, 0.f)
     , m_viewportX(0.f)
@@ -58,16 +57,31 @@ bool Viewport::Resize(unsigned int width, unsigned int height)
         height = DEFAULT_HEIGHT;
     }
 
+    GameState& gs = GameState::GetInstance();
+
+    auto [mapWidth, mapHeight] = gs.GetDimensions();
+
+    float gridWidth = mapWidth * TILE_SIZE;
+    float gridHeight = mapHeight * TILE_SIZE;
+
+    float scale = std::max(
+        gridWidth / static_cast<float>(width),
+        gridHeight / static_cast<float>(height)
+    );
+
     m_view.setCenter(
-        static_cast<float>(width) / 2.f,
-        static_cast<float>(height) / 2.f
+        static_cast<float>(gridWidth) / 2.f,
+        static_cast<float>(gridHeight) / 2.f
     );
     m_view.setSize(
         static_cast<float>(width),
         static_cast<float>(height)
     );
     m_texture.create(width, height);
+
+    m_view.zoom(scale);
     m_texture.setView(m_view);
+    m_zoom = DEFAULT_ZOOM;
 
     Render();
 
@@ -140,8 +154,8 @@ void Viewport::ProcessEvent(const sf::Event& event)
             auto [mapWidth, mapHeight] = gs.GetDimensions();
             sf::Vector2f viewCenter = m_view.getCenter();
 
-            float gridWidth = mapWidth * m_tileSize;
-            float gridHeight = mapHeight * m_tileSize;
+            float gridWidth = mapWidth * TILE_SIZE;
+            float gridHeight = mapHeight * TILE_SIZE;
 
             float minX = -gridWidth * 0.5f;
             float maxX = gridWidth * 1.5f;
@@ -183,30 +197,21 @@ void Viewport::SetViewportPosition(float x, float y)
 ///////////////////////////////////////////////////////////////////////////////
 void Viewport::RenderGrid(void)
 {
-    sf::Vector2u size = m_texture.getSize();
-
     GameState& gs = GameState::GetInstance();
     auto [width, height] = gs.GetDimensions();
 
-    float tileWidth = static_cast<float>(size.x) / width;
-    float tileHeight = static_cast<float>(size.y) / height;
-    m_tileSize = std::min(tileWidth, tileHeight);
-
-    float offsetX = (size.x - (width * m_tileSize)) / 2.f;
-    float offsetY = (size.y - (height * m_tileSize)) / 2.f;
-
-    sf::RectangleShape tile(sf::Vector2f(m_tileSize - 1.f, m_tileSize - 1.f));
+    sf::RectangleShape tile(sf::Vector2f(TILE_SIZE - 2.f, TILE_SIZE - 2.f));
 
     tile.setFillColor(sf::Color::Transparent);
-    tile.setOutlineThickness(1.f);
+    tile.setOutlineThickness(2.f);
     tile.setOutlineColor(sf::Color(80, 80, 80));
 
     for (unsigned int y = 0; y < height; ++y)
     {
         for (unsigned int x = 0; x < width; ++x)
         {
-            float posX = static_cast<float>(x) * m_tileSize + offsetX;
-            float posY = static_cast<float>(y) * m_tileSize + offsetY;
+            float posX = static_cast<float>(x) * TILE_SIZE;
+            float posY = static_cast<float>(y) * TILE_SIZE;
 
             tile.setPosition(posX, posY);
             m_texture.draw(tile);

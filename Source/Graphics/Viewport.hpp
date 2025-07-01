@@ -30,7 +30,7 @@ private:
     static constexpr unsigned int DEFAULT_HEIGHT = 600;
     static constexpr float DEFAULT_ZOOM = 1.0f;
     static constexpr float MIN_ZOOM = 0.1f;
-    static constexpr float MAX_ZOOM = 1.0f;
+    static constexpr float MAX_ZOOM = 1.2f;
     static constexpr float TILE_SIZE = 64.0f;
 
 private:
@@ -40,7 +40,6 @@ private:
     sf::View m_view;                //< The SFML view for the viewport
     sf::RenderTexture m_texture;    //< The texture used for rendering
     float m_zoom;                   //< The zoom level of the viewport
-    float m_tileSize;               //< The size of the tiles in the viewport
     bool m_isDragging;              //< Indicate if the viewport is being dragged
     sf::Vector2f m_lastMousePos;    //< The last mouse position when dragging
     float m_viewportX;              //< The X position of the viewport
