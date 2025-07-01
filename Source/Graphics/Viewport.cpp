@@ -3,6 +3,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 #include "Graphics/Viewport.hpp"
 #include "Game/GameState.hpp"
+#include "Libraries/imgui.h"
 #include <iostream>
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -84,14 +85,17 @@ void Viewport::ProcessEvent(const sf::Event& event)
 {
     if (event.type == sf::Event::MouseWheelScrolled)
     {
-        sf::Vector2f halfSize = static_cast<sf::Vector2f>
-            (m_texture.getSize()) / 2.f;
-        sf::Vector2f mousePos = static_cast<sf::Vector2f>
-            (sf::Mouse::getPosition()) -
-            sf::Vector2f(m_viewportX, m_viewportY) - halfSize;
-        sf::Vector2f oldWorldPos = m_texture.mapPixelToCoords(
-            static_cast<sf::Vector2i>(mousePos), m_view
-        );
+        ImVec2 pos = ImGui::GetMousePos();
+
+        if (
+            pos.x < m_viewportX ||
+            pos.y < m_viewportY ||
+            pos.x > m_viewportX + m_texture.getSize().x ||
+            pos.y > m_viewportY + m_texture.getSize().y
+        )
+        {
+            return;
+        }
 
         if (event.mouseWheelScroll.delta > 0)
         {
@@ -102,10 +106,6 @@ void Viewport::ProcessEvent(const sf::Event& event)
             Zoom(1.1f);
         }
 
-        sf::Vector2f newWorldPos = m_texture.mapPixelToCoords(
-            static_cast<sf::Vector2i>(mousePos), m_view
-        );
-        m_view.move(oldWorldPos - newWorldPos);
         m_texture.setView(m_view);
     }
     else if (event.type == sf::Event::MouseButtonPressed)

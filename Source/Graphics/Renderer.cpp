@@ -11,7 +11,7 @@ namespace Zappy
 
 ///////////////////////////////////////////////////////////////////////////////
 Renderer::Renderer(void)
-    : m_window(sf::VideoMode(1280, 720), "Zappy", sf::Style::Default)
+    : m_window(sf::VideoMode(1920, 1080), "Zappy", sf::Style::Default)
     , m_viewport()
     , m_gui(m_window)
 {}
