@@ -23,4 +23,34 @@ unsigned int Viewport::GetTextureID(void) const
 void Viewport::Render(void)
 {}
 
+///////////////////////////////////////////////////////////////////////////////
+void Viewport::Resize(unsigned int width, unsigned int height)
+{
+    sf::Vector2u size = m_texture.getSize();
+
+    if (size.x == width && size.y == height)
+    {
+        return;
+    }
+
+    if (width == 0 || height == 0)
+    {
+        width = DEFAULT_WIDTH;
+        height = DEFAULT_HEIGHT;
+    }
+
+    m_view.setSize(
+        static_cast<float>(width),
+        static_cast<float>(height)
+    );
+    m_texture.create(width, height);
+    m_texture.setView(m_view);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+sf::Vector2u Viewport::GetSize(void) const
+{
+    return (m_texture.getSize());
+}
+
 } // !namespace Zappy
