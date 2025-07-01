@@ -233,6 +233,55 @@ void Viewport::RenderGrid(void)
 
             tile.setPosition(posX, posY);
             m_texture.draw(tile);
+
+            // Draw inventory for each tile
+            const Inventory& tileInventory = gs.GetTileAt(x, y);
+                sf::Text text;
+                static sf::Font font;
+                static bool fontLoaded = false;
+
+                if (!fontLoaded) {
+                    if (font.loadFromFile("Assets/Fonts/Arial.ttf")) {
+                        fontLoaded = true;
+                    } else {
+                        std::cerr << "Failed to load font" << std::endl;
+                    }
+                }
+
+            if (fontLoaded) {
+                text.setFont(font);
+                text.setCharacterSize(10);
+
+                float offsetX = 2.0f;
+                float offsetY = 2.0f;
+                float lineSpacing = 8.0f;  // Reduced line spacing
+                text.setCharacterSize(8);  // Smaller text size
+
+                struct ResourceDisplay {
+                    unsigned int value;
+                    sf::Color color;
+                    char symbol;
+                };
+
+                std::vector<ResourceDisplay> resources = {
+                    {tileInventory.food, sf::Color(128, 204, 128), 'F'}, // Food - Green
+                    {tileInventory.linemate, sf::Color(179, 179, 179), 'L'}, // Linemate - Light Gray
+                    {tileInventory.deraumere, sf::Color(77, 153, 230), 'D'}, // Deraumere - Blue
+                    {tileInventory.sibur, sf::Color(230, 153, 77), 'S'}, // Sibur - Orange
+                    {tileInventory.mendiane, sf::Color(204, 128, 204), 'M'}, // Mendiane - Purple
+                    {tileInventory.phiras, sf::Color(128, 128, 230), 'P'}, // Phiras - Light Blue
+                    {tileInventory.thystame, sf::Color(255, 204, 0), 'T'}  // Thystame - Gold
+                };
+
+                float yPos = posY + offsetY;
+                for (const auto& res : resources) {
+                    text.setFillColor(res.color);
+                    text.setString(std::to_string(res.value));
+                    text.setPosition(posX + offsetX, yPos);
+                    m_texture.draw(text);
+                    yPos += lineSpacing;
+                }
+            }
         }
     }
 }
