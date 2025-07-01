@@ -207,6 +207,10 @@ void Viewport::Render(void)
     m_texture.clear(sf::Color(20, 20, 20));
     RenderGrid();
     RenderPlayers();
+    if (gs.HasWin())
+    {
+        RenderWinner(gs.GetWinner());
+    }
 
     m_texture.display();
 }
@@ -350,6 +354,40 @@ std::vector<Viewport::ResourceDisplay>& Viewport::GetResources(const Inventory& 
     m_resources.push_back({inv.thystame, sf::Color(255, 204, 0), 'T'});
 
     return m_resources;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void Viewport::RenderWinner(const Team& team)
+{
+    sf::Vector2u size = m_texture.getSize();
+    float centerX = static_cast<float>(size.x) / 2.0f;
+    float centerY = static_cast<float>(size.y) / 2.0f;
+
+    // Save current view and set to default view for UI elements
+    sf::View currentView = m_texture.getView();
+    m_texture.setView(m_texture.getDefaultView());
+
+    // Create background box
+    sf::RectangleShape background;
+    background.setSize(sf::Vector2f(size.x * 0.7f, size.y * 0.3f));
+    background.setFillColor(sf::Color(0, 0, 0, 200));
+    background.setOrigin(background.getSize().x / 2.0f, background.getSize().y / 2.0f);
+    background.setPosition(centerX, centerY);
+    background.setOutlineThickness(4.0f);
+    background.setOutlineColor(team.GetColor());
+    m_texture.draw(background);
+
+    if (m_fontLoaded) {
+        // Create winner text
+        m_text.setString("WINNER: " + team.GetName());
+        m_text.setCharacterSize(42);
+        m_text.setFillColor(team.GetColor());
+        m_text.setStyle(sf::Text::Bold);
+
+        // Center the text
+        sf::FloatRect textBounds = m_text.getLocalBounds();
+        m_text.setOrigin(textBounds.width / 2.0f, textBounds.height / 2.0f);
+    }
 }
 
 } // !namespace Zappy

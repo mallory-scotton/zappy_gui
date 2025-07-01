@@ -104,6 +104,9 @@ private:
     std::atomic<bool> m_shouldStop;     //<! Indicate if the network thread should stop
     std::condition_variable_any m_cv;   //<! Condition variable for synchronization
 
+    bool m_hasWin;                      //<! Flag to indicate if there is a winner
+    Team m_winner;                      //<! The winning team
+
 private:
     ///////////////////////////////////////////////////////////////////////////
     // Team colors for visualization
@@ -293,6 +296,22 @@ public:
     ///
     ///////////////////////////////////////////////////////////////////////////
     bool HasChanged(void) const;
+
+    ///////////////////////////////////////////////////////////////////////////
+    /// \brief Check if someone has won the game
+    ///
+    /// \return True if there is a winner, false otherwise
+    ///
+    ///////////////////////////////////////////////////////////////////////////
+    bool HasWin(void) const;
+
+    ///////////////////////////////////////////////////////////////////////////
+    /// \brief Get the winning team
+    ///
+    /// \return A reference to the winning Team object
+    ///
+    ///////////////////////////////////////////////////////////////////////////
+    const Team& GetWinner(void) const;
 
 private:
     ///////////////////////////////////////////////////////////////////////////

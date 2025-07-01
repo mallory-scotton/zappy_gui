@@ -54,6 +54,8 @@ GameState::GameState()
     , m_deadPlayers(0)
     , m_hasChanged(false)
     , m_shouldStop(false)
+    , m_hasWin(false)
+    , m_winner("No Winner", sf::Color::White)
 {
     m_totalResources.Reset();
 }
@@ -343,6 +345,18 @@ std::vector<const Player*> GameState::GetPlayersAt(
 bool GameState::HasChanged(void) const
 {
     return (m_hasChanged.load());
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool GameState::HasWin(void) const
+{
+    return (m_hasWin);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+const Team& GameState::GetWinner(void) const
+{
+    return (m_winner);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -748,6 +762,16 @@ void GameState::ParseSEG(const std::string& msg)
         true
     );
     m_hasChanged = true;
+
+    m_hasWin = true;
+    for (auto& team : m_teams)
+    {
+        if (team.GetName() == teamName)
+        {
+            m_winner = team;
+            break;
+        }
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
