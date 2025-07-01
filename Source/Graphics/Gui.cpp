@@ -119,6 +119,7 @@ void Gui::RenderLogs(void)
     ImGui::Begin("Logs");
 
     ImGui::Text("Game Logs:");
+    GameState::ScopedLock lock(gs);
     const auto& logs = gs.GetMessages();
 
     if (ImGui::TreeNode("Filter Options"))
