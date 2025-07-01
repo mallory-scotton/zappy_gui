@@ -55,6 +55,8 @@ private:
     std::vector<Animation> m_activeAnimations;
 
 public:
+    unsigned int m_indexX;
+    unsigned int m_indexY;
     struct ResourceDisplay {
         unsigned int value;
         sf::Color color;

@@ -131,6 +131,34 @@ void Viewport::ProcessEvent(const sf::Event& event)
                 sf::Mouse::getPosition()
             );
         }
+        if (event.mouseButton.button == sf::Mouse::Left)
+        {
+            ImVec2 mousePos = ImGui::GetMousePos();
+            sf::Vector2i sfmlMousePos(
+                static_cast<int>(mousePos.x - m_viewportX),
+                static_cast<int>(mousePos.y - m_viewportY)
+            );
+
+            if (sfmlMousePos.x >= 0 && sfmlMousePos.y >= 0 &&
+                sfmlMousePos.x < static_cast<int>(m_texture.getSize().x) &&
+                sfmlMousePos.y < static_cast<int>(m_texture.getSize().y)) {
+
+                sf::Vector2f worldPos = m_texture.mapPixelToCoords(sfmlMousePos, m_view);
+
+                unsigned int tileX = static_cast<unsigned int>(worldPos.x / TILE_SIZE);
+                unsigned int tileY = static_cast<unsigned int>(worldPos.y / TILE_SIZE);
+
+                GameState& gs = GameState::GetInstance();
+                auto [mapWidth, mapHeight] = gs.GetDimensions();
+
+                if (tileX < static_cast<unsigned int>(mapWidth) &&
+                    tileY < static_cast<unsigned int>(mapHeight)) {
+                    m_indexX = tileX;
+                    m_indexY = tileY;
+                    m_forceRender = true;
+                }
+            }
+        }
     }
     else if (event.type == sf::Event::MouseButtonReleased)
     {
@@ -265,6 +293,10 @@ void Viewport::RenderGrid(void)
             }
         }
     }
+    tile.setPosition(static_cast<float>(m_indexX) * TILE_SIZE, static_cast<float>(m_indexY) * TILE_SIZE);
+    tile.setOutlineColor(sf::Color(255, 215, 0));
+    tile.setOutlineThickness(OUTLINE_THICKNESS + 1.0f);
+    m_texture.draw(tile);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

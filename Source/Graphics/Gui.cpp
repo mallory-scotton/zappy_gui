@@ -64,7 +64,7 @@ void Gui::Render(Viewport& viewport)
 
     RenderLogs();
     RenderCurrentGame();
-    RenderTileInspector();
+    RenderTileInspector(viewport);
     RenderViewport(viewport);
 
     if (m_debug)
@@ -298,15 +298,15 @@ void Gui::RenderCurrentGame(void)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void Gui::RenderTileInspector(void)
+void Gui::RenderTileInspector(Viewport& viewport)
 {
     GameState& gs = GameState::GetInstance();
 
     ImGui::Begin("Tile Inspector");
 
-    ImGui::Text("Current Tile: (%d, %d)", m_currentX, m_currentY);
+    ImGui::Text("Current Tile: (%d, %d)", viewport.m_indexX, viewport.m_indexY);
 
-    const Inventory& inv = gs.GetTileAt(m_currentX, m_currentY);
+    const Inventory& inv = gs.GetTileAt(viewport.m_indexX, viewport.m_indexY);
 
     inv.DrawInvText();
 
@@ -321,7 +321,7 @@ void Gui::RenderTileInspector(void)
 
         for (const auto& player : team.GetPlayers())
         {
-            if (player.GetX() == m_currentX && player.GetY() == m_currentY)
+            if (player.GetX() == viewport.m_indexX && player.GetY() == viewport.m_indexY)
             {
                 ImGui::Text("%s (ID: %d, Level: %d)", player.GetName().c_str(),
                             player.GetID(), player.GetLevel());
