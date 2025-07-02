@@ -54,6 +54,8 @@ private:
     sf::Text m_text;                //< The text object for rendering resources
     std::vector<Animation> m_activeAnimations;
 
+    bool m_renderWinner = false;
+
 public:
     unsigned int m_indexX;
     unsigned int m_indexY;

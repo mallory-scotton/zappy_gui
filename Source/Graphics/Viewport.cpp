@@ -207,6 +207,13 @@ void Viewport::ProcessEvent(const sf::Event& event)
             m_forceRender = true;
         }
     }
+    else if (event.type == sf::Event::KeyReleased)
+    {
+        if (event.key.code == sf::Keyboard::Space)
+        {
+            m_renderWinner = !m_renderWinner;
+        }
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -244,7 +251,7 @@ void Viewport::Render(void)
 
     ProcessAnimationEvents();
     UpdateAndRenderAnimations();
-    if (gs.HasWin())
+    if (gs.HasWin() && m_renderWinner)
     {
         RenderWinner(gs.GetWinner());
         m_activeAnimations.clear();
@@ -389,12 +396,12 @@ std::vector<Viewport::ResourceDisplay>& Viewport::GetResources(const Inventory& 
     m_resources.clear();
 
     m_resources.push_back({inv.food, sf::Color(128, 204, 128), 'F'});
-    m_resources.push_back({inv.linemate, sf::Color(179, 179, 179), 'L'});
-    m_resources.push_back({inv.deraumere, sf::Color(77, 153, 230), 'D'});
-    m_resources.push_back({inv.sibur, sf::Color(230, 153, 77), 'S'});
-    m_resources.push_back({inv.mendiane, sf::Color(204, 128, 204), 'M'});
-    m_resources.push_back({inv.phiras, sf::Color(128, 128, 230), 'P'});
-    m_resources.push_back({inv.thystame, sf::Color(255, 204, 0), 'T'});
+    m_resources.push_back({inv.linemate, sf::Color(179, 179, 179), 'L'});  // Gray
+    m_resources.push_back({inv.deraumere, sf::Color(0, 128, 75), 'D'});  // Deep emerald green
+    m_resources.push_back({inv.sibur, sf::Color(147, 112, 219), 'S'});      // Purple ametgyst
+    m_resources.push_back({inv.mendiane, sf::Color(224, 17, 95), 'M'});  // Ruby red
+    m_resources.push_back({inv.phiras, sf::Color(135, 206, 235), 'P'});    // Light blue topaz
+    m_resources.push_back({inv.thystame, sf::Color(255, 204, 0), 'T'});    // Gold
 
     return (m_resources);
 }
@@ -409,11 +416,11 @@ void Viewport::RenderWinner(const Team& team)
     float gridCenterX = static_cast<float>(mapWidth * TILE_SIZE) / 2.0f;
     float gridCenterY = static_cast<float>(mapHeight * TILE_SIZE) / 2.0f;
 
-    // sf::View originalView = m_texture.getView();
+    sf::View originalView = m_texture.getView();
 
-    // sf::View winnerView = m_view;
-    // winnerView.setCenter(gridCenterX, gridCenterY);
-    // m_texture.setView(winnerView);
+    sf::View winnerView = m_view;
+    winnerView.setCenter(gridCenterX, gridCenterY);
+    m_texture.setView(winnerView);
 
     sf::RectangleShape background;
     background.setSize(sf::Vector2f(size.x * 0.7f, size.y * 0.3f));
@@ -436,7 +443,7 @@ void Viewport::RenderWinner(const Team& team)
         text.setOrigin(textBounds.width / 2.0f, textBounds.height / 2.0f);
         m_texture.draw(text);
     }
-    // m_texture.setView(originalView);
+    m_texture.setView(originalView);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
