@@ -16,7 +16,7 @@ Animation::Animation(unsigned int x, unsigned int y, float maxDist, float durati
     m_circle.setRadius(0.f);
     m_circle.setOrigin(0.f, 0.f);
     m_circle.setFillColor(sf::Color::Transparent);
-    m_circle.setOutlineThickness(1.f);
+    m_circle.setOutlineThickness(2.f);
     m_rectangle.setSize(sf::Vector2f(0.f, 0.f));
     m_rectangle.setOrigin(0.f, 0.f);
     m_rectangle.setFillColor(sf::Color::Transparent);
