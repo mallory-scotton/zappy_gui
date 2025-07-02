@@ -15,6 +15,7 @@ Team::Team(const std::string& name, const sf::Color& color)
     : m_name(name)
     , m_deadPlayers(0)
     , m_color(color)
+    , m_maxLevel(1)
 {}
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -75,6 +76,18 @@ unsigned int Team::GetDeadPlayersCount(void) const
 const sf::Color& Team::GetColor(void) const
 {
     return (m_color);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+const unsigned int Team::GetMaxLevel(void) const
+{
+    return (m_maxLevel);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void Team::SetMaxLevel(unsigned int maxLevel)
+{
+    m_maxLevel = maxLevel;
 }
 
 } // !namespace Zappy

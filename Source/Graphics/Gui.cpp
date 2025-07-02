@@ -265,6 +265,8 @@ void Gui::RenderCurrentGame(void)
         for (int i = 8; i >= 1; i--) {
             if (levelCount[i] > 0) {
                 maxLevel = i;
+                // unsigned int max = std::max(team.GetMaxLevel(), static_cast<unsigned int>(i));
+                // team.SetMaxLevel(max);
                 break;
             }
         }
@@ -275,7 +277,7 @@ void Gui::RenderCurrentGame(void)
 
         if (open)
         {
-            ImGui::Text("Players: %d | Max Level: %d", team.GetLivingPlayers(), maxLevel);
+            ImGui::Text("Players: %d | Max Level: %d", team.GetLivingPlayers(), team.GetMaxLevel());
 
             for (unsigned int level = 8; level > 0; level--) {
                 ImGui::Separator();
