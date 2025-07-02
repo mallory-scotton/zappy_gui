@@ -410,13 +410,13 @@ std::vector<Viewport::ResourceDisplay>& Viewport::GetResources(const Inventory& 
 {
     m_resources.clear();
 
-    m_resources.push_back({inv.food, sf::Color(128, 204, 128), 'F'});
+    m_resources.push_back({inv.food, sf::Color(255, 255, 153), 'F'});  // Pastel yellow
     m_resources.push_back({inv.linemate, sf::Color(179, 179, 179), 'L'});  // Gray
     m_resources.push_back({inv.deraumere, sf::Color(0, 128, 75), 'D'});  // Deep emerald green
-    m_resources.push_back({inv.sibur, sf::Color(147, 112, 219), 'S'});      // Purple ametgyst
-    m_resources.push_back({inv.mendiane, sf::Color(224, 17, 95), 'M'});  // Ruby red
-    m_resources.push_back({inv.phiras, sf::Color(135, 206, 235), 'P'});    // Light blue topaz
-    m_resources.push_back({inv.thystame, sf::Color(255, 204, 0), 'T'});    // Gold
+    m_resources.push_back({inv.sibur, sf::Color(224, 17, 95), 'S'});      // red ruby
+    m_resources.push_back({inv.mendiane, sf::Color(230, 230, 245), 'M'});  // White pastel
+    m_resources.push_back({inv.phiras, sf::Color(175, 238, 238), 'P'});    // Pastel cyan
+    m_resources.push_back({inv.thystame, sf::Color(147, 112, 219), 'T'});    // purple
 
     return (m_resources);
 }
