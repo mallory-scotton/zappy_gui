@@ -22,6 +22,10 @@ Viewport::Viewport(void)
     , m_viewportX(0.f)
     , m_viewportY(0.f)
     , m_forceRender(false)
+    , m_fontLoaded(false)
+    , m_renderWinner(false)
+    , m_indexX(0)
+    , m_indexY(0)
 {
     Resize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
@@ -353,7 +357,7 @@ void Viewport::RenderPlayers(void)
 
             auto players = gs.GetPlayersAt(x, y);
 
-            if (players.size() == 0)
+            if (players.empty())
             {
                 continue;
             }

@@ -28,6 +28,18 @@ class Viewport
 {
 private:
     ///////////////////////////////////////////////////////////////////////////
+    /// \brief Structure to represent a resource display
+    ///
+    ///////////////////////////////////////////////////////////////////////////
+    struct ResourceDisplay
+    {
+        unsigned int value;
+        sf::Color color;
+        char symbol;
+    };
+
+private:
+    ///////////////////////////////////////////////////////////////////////////
     // Constants
     ///////////////////////////////////////////////////////////////////////////
     static constexpr unsigned int DEFAULT_WIDTH = 800;
@@ -50,21 +62,12 @@ private:
     float m_viewportY;              //< The Y position of the viewport
     bool m_forceRender;             //< Flag to force rendering
     sf::Font m_font;                //< The font used for rendering text
-    bool m_fontLoaded = false;      //< Flag to check if the font is loaded
+    bool m_fontLoaded;              //< Flag to check if the font is loaded
     sf::Text m_text;                //< The text object for rendering resources
     std::vector<Animation> m_activeAnimations;
-
-    bool m_renderWinner = false;
-
-public:
+    bool m_renderWinner;
     unsigned int m_indexX;
     unsigned int m_indexY;
-    struct ResourceDisplay {
-        unsigned int value;
-        sf::Color color;
-        char symbol;
-    };
-
     std::vector<ResourceDisplay> m_resources;
 
 public:
