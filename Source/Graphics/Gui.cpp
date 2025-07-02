@@ -319,7 +319,18 @@ void Gui::RenderTileInspector(Viewport& viewport)
     ImGui::Separator();
     ImGui::Dummy(ImVec2(0.0f, 5.0f));
 
-    ImGui::Text("Players on Tile: %d", 0);
+    int num = 0;
+    for (const auto& team : gs.GetTeams())
+    {
+        for (const auto& player : team.GetPlayers())
+        {
+            if (player.GetX() == viewport.m_indexX && player.GetY() == viewport.m_indexY)
+            {
+                num++;
+            }
+        }
+    }
+    ImGui::Text("Players on Tile: %d", num);
     for (const auto& team : gs.GetTeams())
     {
         ImGui::PushStyleColor(ImGuiCol_Text, ConvertColor(team.GetColor()));
