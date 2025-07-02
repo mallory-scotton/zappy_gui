@@ -79,7 +79,7 @@ const sf::Color& Team::GetColor(void) const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-const unsigned int Team::GetMaxLevel(void) const
+unsigned int Team::GetMaxLevel(void) const
 {
     return (m_maxLevel);
 }

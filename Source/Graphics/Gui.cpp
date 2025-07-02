@@ -265,19 +265,17 @@ void Gui::RenderCurrentGame(void)
         for (int i = 8; i >= 1; i--) {
             if (levelCount[i] > 0) {
                 maxLevel = i;
-                // unsigned int max = std::max(team.GetMaxLevel(), static_cast<unsigned int>(i));
-                // team.SetMaxLevel(max);
                 break;
             }
         }
 
-        std::string displayName = team.GetName() + " Level " + std::to_string(maxLevel);
+        std::string displayName = team.GetName() + " Level " + std::to_string(team.GetMaxLevel());
         bool open = ImGui::TreeNode(team.GetName().c_str(), "%s", displayName.c_str());
         ImGui::PopStyleColor();
 
         if (open)
         {
-            ImGui::Text("Players: %d | Max Level: %d", team.GetLivingPlayers(), team.GetMaxLevel());
+            ImGui::Text("Players: %d | Max Level: %d", team.GetLivingPlayers(), maxLevel);
 
             for (unsigned int level = 8; level > 0; level--) {
                 ImGui::Separator();
