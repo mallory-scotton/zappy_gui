@@ -62,7 +62,10 @@ void Gui::Render(Viewport& viewport)
 {
     PrepareDocking();
 
+    // SMall font
     RenderLogs();
+
+    // Big font
     RenderCurrentGame();
     RenderTileInspector(viewport);
     RenderViewport(viewport);
@@ -211,6 +214,8 @@ void Gui::RenderCurrentGame(void)
     GameState& gs = GameState::GetInstance();
 
     ImGui::Begin("Current Game");
+
+    ImGui::SetWindowFontScale(2.f);
 
     ImGui::Text("Current Frequency: %d", gs.GetFrequency());
     ImGui::Text("Map Size: %d x %d", gs.GetWidth(), gs.GetHeight());
