@@ -371,6 +371,11 @@ void Viewport::RenderPlayers(void)
                     break;
                 }
 
+                if (!player)
+                {
+                    continue;
+                }
+
                 unsigned int orientation = player->GetOrientation();
 
                 auto it = std::find(dirs.begin(), dirs.end(), orientation);
@@ -387,6 +392,12 @@ void Viewport::RenderPlayers(void)
             }
 
             const auto top = players.back();
+
+            if (!top)
+            {
+                continue;
+            }
+
             circle.setPosition(posX, posY);
             circle.setFillColor(teamColors[top->GetTeam()]);
             m_texture.draw(circle);

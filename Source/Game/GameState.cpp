@@ -245,7 +245,7 @@ unsigned int GameState::GetHeight(void) const
 const Inventory& GameState::GetTileAt(unsigned int x, unsigned int y) const
 {
     std::lock_guard<std::recursive_mutex> lock(m_mutex);
-    if (x >= m_width || y >= m_height)
+    if (x >= m_width || y >= m_height || m_tiles.size() <= y * m_width + x)
     {
         throw Exception("Invalid tile coordinates");
     }
