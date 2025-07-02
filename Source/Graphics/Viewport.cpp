@@ -25,10 +25,17 @@ Viewport::Viewport(void)
 {
     Resize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
-    if (std::getenv("APPDIR") != nullptr && m_font.loadFromFile("APPDIR/usr/share/Assets/Fonts/Arial.ttf")) {
+    auto appdir = std::getenv("APPDIR");
+
+    if (appdir && m_font.loadFromFile(
+        std::string(appdir) + "/usr/share/Assets/Fonts/Arial.ttf"
+    ))
+    {
         m_fontLoaded = true;
         m_text.setFont(m_font);
-    } else if (m_font.loadFromFile("Assets/Fonts/Arial.ttf")) {
+    }
+    else if (m_font.loadFromFile("Assets/Fonts/Arial.ttf"))
+    {
         m_fontLoaded = true;
         m_text.setFont(m_font);
     }
