@@ -23,7 +23,7 @@ Viewport::Viewport(void)
     , m_viewportY(0.f)
     , m_forceRender(false)
     , m_fontLoaded(false)
-    , m_renderWinner(false)
+    , m_renderWinner(true)
     , m_indexX(0)
     , m_indexY(0)
 {
