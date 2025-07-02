@@ -20,7 +20,7 @@ Animation::Animation(unsigned int x, unsigned int y, float maxDist, float durati
     m_rectangle.setSize(sf::Vector2f(0.f, 0.f));
     m_rectangle.setOrigin(0.f, 0.f);
     m_rectangle.setFillColor(sf::Color::Transparent);
-    m_rectangle.setOutlineThickness(1.f);
+    m_rectangle.setOutlineThickness(2.f);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
