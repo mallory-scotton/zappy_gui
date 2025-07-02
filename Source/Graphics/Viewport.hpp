@@ -26,7 +26,7 @@ namespace Zappy
 ///////////////////////////////////////////////////////////////////////////////
 class Viewport
 {
-private:
+public:
     ///////////////////////////////////////////////////////////////////////////
     /// \brief Structure to represent a resource display
     ///
@@ -66,8 +66,10 @@ private:
     sf::Text m_text;                //< The text object for rendering resources
     std::vector<Animation> m_activeAnimations;
     bool m_renderWinner;
-    unsigned int m_indexX;
-    unsigned int m_indexY;
+
+public:
+    unsigned int m_indexX;          //< The X index of the viewport
+    unsigned int m_indexY;          //< The Y index of the viewport
     std::vector<ResourceDisplay> m_resources;
 
 public:
