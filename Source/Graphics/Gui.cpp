@@ -213,6 +213,8 @@ void Gui::RenderCurrentGame(void)
 {
     GameState& gs = GameState::GetInstance();
 
+    GameState::ScopedLock lock(gs);
+
     ImGui::Begin("Current Game");
 
     ImGui::SetWindowFontScale(2.f);
@@ -262,8 +264,10 @@ void Gui::RenderCurrentGame(void)
         }
 
         int maxLevel = 1;
-        for (int i = 8; i >= 1; i--) {
-            if (levelCount[i] > 0) {
+        for (int i = 8; i >= 1; i--)
+        {
+            if (levelCount[i] > 0)
+            {
                 maxLevel = i;
                 break;
             }
@@ -275,7 +279,7 @@ void Gui::RenderCurrentGame(void)
 
         if (open)
         {
-            ImGui::Text("Players: %d | Max Level: %d", team.GetLivingPlayers(), maxLevel);
+            ImGui::Text("Players: %d | Current Level: %d", team.GetLivingPlayers(), maxLevel);
 
             for (unsigned int level = 8; level > 0; level--) {
                 ImGui::Separator();
@@ -306,6 +310,8 @@ void Gui::RenderCurrentGame(void)
 void Gui::RenderTileInspector(Viewport& viewport)
 {
     GameState& gs = GameState::GetInstance();
+
+    GameState::ScopedLock lock(gs);
 
     ImGui::Begin("Tile Inspector");
 

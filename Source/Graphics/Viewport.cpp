@@ -255,6 +255,7 @@ void Viewport::Render(void)
 
     ProcessAnimationEvents();
     UpdateAndRenderAnimations();
+
     if (gs.HasWin() && m_renderWinner)
     {
         RenderWinner(gs.GetWinner());
@@ -269,6 +270,8 @@ void Viewport::RenderGrid(void)
 {
     GameState& gs = GameState::GetInstance();
     auto [width, height] = gs.GetDimensions();
+
+    GameState::ScopedLock lock(gs);
 
     static constexpr float OUTLINE_THICKNESS = 3.f;
 
@@ -322,6 +325,9 @@ void Viewport::RenderGrid(void)
 void Viewport::RenderPlayers(void)
 {
     GameState& gs = GameState::GetInstance();
+
+    GameState::ScopedLock lock(gs);
+
     auto [width, height] = gs.GetDimensions();
     auto teams = gs.GetTeams();
     std::map<std::string, sf::Color> teamColors;
@@ -467,6 +473,7 @@ void Viewport::ProcessAnimationEvents(void)
     GameState& gs = GameState::GetInstance();
 
     GameState::ScopedLock lock(gs);
+
 
     while (const auto& event = gs.PopAnimation())
     {

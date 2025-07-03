@@ -10,8 +10,14 @@ namespace Zappy
 {
 ///////////////////////////////////////////////////////////////////////////////
 Animation::Animation(unsigned int x, unsigned int y, float maxDist, float duration)
-    : m_x(x), m_y(y), m_maxDist(maxDist), m_duration(duration),
-      m_isFinished(false), m_isCircle(false), m_isRectangle(false)
+    : m_x(x)
+    , m_y(y)
+    , m_maxDist(maxDist)
+    , m_duration(duration)
+    , m_currentTime(0.f)
+    , m_isFinished(false)
+    , m_isCircle(false)
+    , m_isRectangle(false)
 {
     m_circle.setRadius(0.f);
     m_circle.setOrigin(0.f, 0.f);
@@ -109,6 +115,9 @@ void Animation::SetColor(const sf::Color& color)
 ///////////////////////////////////////////////////////////////////////////////
 void Animation::SetPosition(unsigned int x, unsigned int y)
 {
+    m_x = x;
+    m_y = y;
+
     if (m_isCircle)
     {
         m_circle.setPosition(x, y);
@@ -122,19 +131,19 @@ void Animation::SetPosition(unsigned int x, unsigned int y)
 ///////////////////////////////////////////////////////////////////////////////
 bool Animation::IsFinished(void) const
 {
-    return m_isFinished;
+    return (m_isFinished);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 unsigned int Animation::GetX(void) const
 {
-    return m_x;
+    return (m_x);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 unsigned int Animation::GetY(void) const
 {
-    return m_y;
+    return (m_y);
 }
 
 } // !namespace Zappy

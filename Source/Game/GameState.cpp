@@ -472,11 +472,14 @@ void GameState::ParsePLV(const std::string& msg)
     std::istringstream iss(msg);
 
     try {
-        GetPlayerByID(iss).UpdateLevel(iss);
-        for (auto& team: m_teams) {
-            if (team.GetName() == GetPlayerByID(iss).GetTeam())
+        auto& player = GetPlayerByID(iss);
+
+        player.UpdateLevel(iss);
+        for (auto& team: m_teams)
+        {
+            if (team.GetName() == player.GetTeam())
             {
-                team.SetMaxLevel(std::max(team.GetMaxLevel(), GetPlayerByID(iss).GetLevel()));
+                team.SetMaxLevel(std::max(team.GetMaxLevel(), player.GetLevel()));
                 break;
             }
         }
